@@ -3,7 +3,7 @@ body {
   margin: 0;
   padding: 0;
   display: flex;
-  height: 100vh;
+  height: auto;
   background-color: #000;
   color: #fff;
   font-family: 'VT323', monospace;
@@ -21,10 +21,9 @@ body {
 .command-terminal-container {
   background-color: #000;
   color: #fff;
-  padding: 20px;
   border-radius: 5px;
-  margin: 4rem; /* Centers the div horizontally */
-  margin-top: 2rem;
+  margin: 4.5rem; /* Centers the div horizontally */
+  margin-right: 2rem;
 
   display: flex;
   flex-direction: column;
@@ -73,6 +72,10 @@ body {
 .command-messages {
   display: flex;
   flex-direction: column;
+}
+
+.side-panel {
+  margin: 4.5rem;
 }
 
 .message {
@@ -130,4 +133,42 @@ a:hover {
 
 transition-effect {
   transition: opacity 3s ease-in-out;
+}
+
+.game-screen {
+  display: flex;
+}
+
+.vertical-divider {
+  border-left: 1px solid #fff;
+  height: 100%;
+  margin: 0 1rem;
+}
+
+.side-panel {
+  text-align: right;
+  position: sticky;
+  top: 4.5rem;
+  width: 20rem;
+  height: 80vh;
+}
+
+/* backpack */
+.backpack-header {
+  margin-bottom: 1rem;
+}
+
+/* health bar */
+.health-bar {
+  width: 100%;
+  height: 3rem;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-end;
+}
+
+.pixelized--heart {
+  display: block;
+  width: 1em;
+  height: 1em;
 }
