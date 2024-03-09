@@ -16,6 +16,7 @@ body {
   align-items: center;
   justify-content: center;
   margin: 0 auto;
+  height: 100vh;
 }
 
 .command-terminal-container {
@@ -121,7 +122,7 @@ h1 {
     width: 0;
   }
   to {
-    width: 350px;
+    width: 18ch;
   }
 }
 
