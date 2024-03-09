@@ -1,10 +1,12 @@
 // import { useState } from 'react';
 // import { TextField, Button, Container, Typography, Input } from '@mui/material';
-import heart from '../assets/heart.png';
-import hearthalf from '../assets/heart-half.png';
-import heartempty from '../assets/heart-empty.png';
+import heart from '~/assets/heart.png';
+import hearthalf from '~/assets/heart-half.png';
+import heartempty from '~/assets/heart-empty.png';
+import ZorkEngine from '~/services/zork-engine';
 
 export default function Game() {
+  const [threadId] = useThreadId();
   // const [inputValue, setInputValue] = useState<string>('');
   // const [outputValue, setOutputValue] = useState<string>('');
 
@@ -29,64 +31,64 @@ export default function Game() {
   const messagesList = [
     {
       role: 'ZorkBot',
-      text: 'You are standing in an open field west of a white house, with a boarded front door. There is a small mailbox here.',
+      text: 'You are standing in an open field west of a white house, with a boarded front door. There is a small mailbox here.'
     },
     {
       role: 'Player',
-      text: 'I want to open the mailbox.',
+      text: 'I want to open the mailbox.'
     },
     {
       role: 'ZorkBot',
-      text: 'Opening the mailbox reveals a leaflet.',
+      text: 'Opening the mailbox reveals a leaflet.'
     },
     {
       role: 'Player',
-      text: 'I want to read the leaflet.',
+      text: 'I want to read the leaflet.'
     },
     {
       role: 'ZorkBot',
-      text: 'Welcome to Zork! You are about to embark on a journey into the world of Zork. Your mission is to find the treasures hidden throughout the land. Be warned, the land is filled with danger and you will need to use your wits to survive.',
+      text: 'Welcome to Zork! You are about to embark on a journey into the world of Zork. Your mission is to find the treasures hidden throughout the land. Be warned, the land is filled with danger and you will need to use your wits to survive.'
     },
     {
       role: 'ZorkBot',
-      text: 'You are standing in an open field west of a white house, with a boarded front door. There is a small mailbox here.',
+      text: 'You are standing in an open field west of a white house, with a boarded front door. There is a small mailbox here.'
     },
     {
       role: 'Player',
-      text: 'I want to open the mailbox.',
+      text: 'I want to open the mailbox.'
     },
     {
       role: 'ZorkBot',
-      text: 'Opening the mailbox reveals a leaflet.',
+      text: 'Opening the mailbox reveals a leaflet.'
     },
     {
       role: 'Player',
-      text: 'I want to read the leaflet.',
+      text: 'I want to read the leaflet.'
     },
     {
       role: 'ZorkBot',
-      text: 'Welcome to Zork! You are about to embark on a journey into the world of Zork. Your mission is to find the treasures hidden throughout the land. Be warned, the land is filled with danger and you will need to use your wits to survive.',
+      text: 'Welcome to Zork! You are about to embark on a journey into the world of Zork. Your mission is to find the treasures hidden throughout the land. Be warned, the land is filled with danger and you will need to use your wits to survive.'
     },
     {
       role: 'ZorkBot',
-      text: 'You are standing in an open field west of a white house, with a boarded front door. There is a small mailbox here.',
+      text: 'You are standing in an open field west of a white house, with a boarded front door. There is a small mailbox here.'
     },
     {
       role: 'Player',
-      text: 'I want to open the mailbox.',
+      text: 'I want to open the mailbox.'
     },
     {
       role: 'ZorkBot',
-      text: 'Opening the mailbox reveals a leaflet.',
+      text: 'Opening the mailbox reveals a leaflet.'
     },
     {
       role: 'Player',
-      text: 'I want to read the leaflet.',
+      text: 'I want to read the leaflet.'
     },
     {
       role: 'ZorkBot',
-      text: 'Welcome to Zork! You are about to embark on a journey into the world of Zork. Your mission is to find the treasures hidden throughout the land. Be warned, the land is filled with danger and you will need to use your wits to survive.',
-    },
+      text: 'Welcome to Zork! You are about to embark on a journey into the world of Zork. Your mission is to find the treasures hidden throughout the land. Be warned, the land is filled with danger and you will need to use your wits to survive.'
+    }
   ];
 
   return (
@@ -106,9 +108,11 @@ export default function Game() {
         </div>
         <div className="command-input-container">
           <div className="command-prompt">&gt;</div>
-          <form>
+          <form method="post">
+            <input type="hidden" name="threadId" value={threadId} />
             <input
               type="text"
+              name="decision"
               autoFocus // eslint-disable-line jsx-a11y/no-autofocus
               placeholder=""
               className="command-input"
@@ -132,6 +136,16 @@ export default function Game() {
   );
 }
 
+export async function action({ request }: { request: Request }) {
+  const formData = await request.formData();
+  const threadId = formData.get('threadId') || '';
+  const playerDecision = formData.get('decision') || '';
+  const zorkResponse = await ZorkEngine.postUserDecision(
+    threadId.toString(),
+    playerDecision.toString()
+  );
+  console.log(zorkResponse);
+}
 // Function to render hearts based on health
 function renderHearts(health: number) {
   const fullHearts = Math.floor(health / 10); // Number of full hearts
