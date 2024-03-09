@@ -1,0 +1,4 @@
+dist
+build
+.eslintrc.cjs
+.prettierrc.js
