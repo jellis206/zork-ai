@@ -1,12 +1,18 @@
-import { Card, CardActionArea, CardContent, CardMedia, Typography } from '@mui/material';
-import type { MetaFunction } from '@remix-run/node';
 import { Link } from 'react-router-dom';
-import styles from '~/styles/main.css';
+import '~/styles/main.css';
 import useThreadId from '~/hooks/use-user-id';
 import ZorkEngine from '~/services/zork-engine';
 
+// Define types for card data
+interface CardData {
+  id: number;
+  src: string;
+  title: string;
+  description: string;
+}
+
 // Array of objects representing content for each card
-const cardData = [
+const cardData: CardData[] = [
   {
     id: 1,
     src: 'https://www.pixelstalk.net/wp-content/uploads/2016/06/Art-Images-HD-Sci-Fi-Downlaod.jpg',
@@ -27,13 +33,13 @@ const cardData = [
   },
   {
     id: 4,
-    src: 'https://upload.wikimedia.org/wikipedia/commons/0/0c/Mars_-_August_30_2021_-_Flickr_-_Kevin_M._Gill.png',
+    src: 'https://media.cnn.com/api/v1/images/stellar/prod/210511145919-perseverance-mars-rover-0429.jpg?q=w_2068,h_1172,x_0,y_0,c_fill/h_618',
     title: 'Terraform Mars',
     description: 'Become a Cosmonaut'
   }
 ];
 
-export const meta: MetaFunction = () => {
+export const meta = () => {
   return [{ title: 'New Remix App' }, { name: 'description', content: 'Welcome to Zork-AI!' }];
 };
 
@@ -44,6 +50,7 @@ function Welcome() {
     </div>
   );
 }
+
 function CustomTheme() {
   return (
     <form>
@@ -69,40 +76,24 @@ export default function Index() {
     <div className="main-menu">
       <Welcome />
       <div className="card-container">
-        {cardData.map((card) => (
-          <Card key={card.id} className="transition-effect">
+        {cardData.map((card: CardData) => (
+          <div key={card.id} className="transition-effect">
             <Link to="/game" state={() => initUserThread(card.description)}>
-              <CardActionArea>
-                <CardMedia component="img" height="140" src={card.src} alt="Play" />
-                <CardContent>
-                  <Typography
-                    gutterBottom
-                    variant="h5"
-                    component="div"
-                    className="card-text"
-                    style={{ fontFamily: 'Courier New' }}
-                  >
-                    {card.title}
-                  </Typography>
-                  <Typography
-                    variant="body2"
-                    color="text.secondary"
-                    className="card-text"
-                    style={{ fontFamily: 'Courier New' }}
-                  >
-                    {card.description}
-                  </Typography>
-                </CardContent>
-              </CardActionArea>
+              <img
+                className="card-img"
+                src={card.src}
+                alt="Play"
+                style={{ maxWidth: '100%', height: 'auto' }} // Adjust image size here
+              />
+              <div className="card-content">
+                <h2 className="card-title">{card.title}</h2>
+                <p className="card-description">{card.description}</p>
+              </div>
             </Link>
-          </Card>
+          </div>
         ))}
       </div>
       <CustomTheme />
     </div>
   );
-}
-
-export function links() {
-  return [{ rel: 'stylesheet', href: styles }];
 }

@@ -35,7 +35,7 @@ body {
 }
 
 .card-text {
-  fontfamily: 'Courier New';
+  font-family: 'Courier New';
 }
 
 .command-terminal-container {
