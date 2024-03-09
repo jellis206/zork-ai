@@ -10,6 +10,7 @@ body {
   height: 100vh;
   background-color: #000;
   color: #fff;
+  font-family: 'VT323', monospace;
 }
 
 .container {
@@ -19,15 +20,24 @@ body {
 
 h1 {
   text-align: center;
+  font-family: 'VT323', monospace;
+  overflow: hidden; /* Hide overflow */
+  white-space: nowrap; /* Prevent line breaks */
+  border-right: 2px solid #fff; /* Create blinking cursor */
+  animation: typing 2s steps(20) forwards; 
 }
 
-ul {
-  list-style-type: none;
-  padding: 0;
-}
 
-li {
-  margin-bottom: 10px;
+
+
+
+@keyframes typing {
+  from {
+    width: 0; /* Start with no width */
+  }
+  to {
+    width: 100%; /* End with full width */
+  }
 }
 
 a {
