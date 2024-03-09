@@ -5,6 +5,7 @@ import hearthalf from '~/assets/heart-half.png';
 import heartempty from '~/assets/heart-empty.png';
 import ZorkEngine from '~/services/zork-engine';
 import useThreadId from '~/hooks/use-user-id';
+import { Form, redirect } from '@remix-run/react';
 
 export default function Game() {
   const [threadId] = useThreadId();
@@ -109,7 +110,7 @@ export default function Game() {
         </div>
         <div className="command-input-container">
           <div className="command-prompt">&gt;</div>
-          <form method="post">
+          <Form method="post">
             <input type="hidden" name="threadId" value={threadId} />
             <input
               type="text"
@@ -120,7 +121,7 @@ export default function Game() {
               // onKeyPress={handleKeyPress}
               style={{ width: '400px' }} // Adjust the width as needed
             />
-          </form>
+          </Form>
         </div>
       </div>
       <div className="vertical-divider"></div>
@@ -146,7 +147,9 @@ export async function action({ request }: { request: Request }) {
     playerDecision.toString()
   );
   console.log(zorkResponse);
+  return redirect('/game');
 }
+
 // Function to render hearts based on health
 function renderHearts(health: number) {
   const fullHearts = Math.floor(health / 10); // Number of full hearts

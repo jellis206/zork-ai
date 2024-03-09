@@ -82,4 +82,9 @@ export class ZorkAI {
       return 'Something went wrong. Please try again.';
     }
   }
+
+  public async getMessages(threadId: string): Promise<string[]> {
+    const messagePage = await this.openai.beta.threads.messages.list(threadId);
+    return messagePage.data.map((message) => message.content.toString());
+  }
 }
