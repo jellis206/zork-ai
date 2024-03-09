@@ -23,8 +23,7 @@ body {
   background-color: #000;
   color: #fff;
   border-radius: 5px;
-  margin: 4.5rem; /* Centers the div horizontally */
-  margin-right: 2rem;
+  margin: 2rem;
 
   display: flex;
   flex-direction: column;
@@ -170,6 +169,17 @@ transition-effect {
 /* backpack */
 .backpack-header {
   margin-bottom: 1rem;
+  max-width: 192px;
+}
+
+.backpack-header img {
+  width: 100%;
+  height: auto;
+}
+
+.backpack-item p {
+  margin: 0;
+  line-height: 2rem;
 }
 
 /* health bar */
@@ -185,4 +195,17 @@ transition-effect {
   display: block;
   width: 1em;
   height: 1em;
+}
+
+/* desktop */
+@media (min-width: 1000px) {
+  .command-terminal-container {
+    margin: 4.5rem;
+    margin-right: 2rem;
+  }
+
+  .vertical-divider {
+    position: fixed;
+    right: 20rem;
+  }
 }

@@ -3,6 +3,7 @@
 import heart from '~/assets/heart.png';
 import hearthalf from '~/assets/heart-half.png';
 import heartempty from '~/assets/heart-empty.png';
+import backpack from '~/assets/backpack.png';
 import ZorkEngine from '~/services/zork-engine';
 import useThreadId from '~/hooks/use-user-id';
 import { Form, redirect } from '@remix-run/react';
@@ -127,11 +128,19 @@ export default function Game() {
       <div className="vertical-divider"></div>
       <div className="side-panel">
         <div className="health-bar">{renderHearts(health)}</div>
-        <div className="backpack-header">Backpack</div>
+        <div className="backpack-header">
+          <img src={backpack} alt="backpack"></img>
+        </div>
         <div className="backpack-items">
-          <div className="backpack-item">Sword</div>
-          <div className="backpack-item">Shield</div>
-          <div className="backpack-item">Potion</div>
+          <div className="backpack-item">
+            <p>Sword</p>
+          </div>
+          <div className="backpack-item">
+            <p>Shield</p>
+          </div>
+          <div className="backpack-item">
+            <p>Illegal Drugs</p>
+          </div>
         </div>
       </div>
     </div>
