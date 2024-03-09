@@ -1,5 +1,8 @@
 // import { useState } from 'react';
 // import { TextField, Button, Container, Typography, Input } from '@mui/material';
+import heart from '../assets/heart.png';
+import hearthalf from '../assets/heart-half.png';
+import heartempty from '../assets/heart-empty.png';
 
 export default function Game() {
   // const [inputValue, setInputValue] = useState<string>('');
@@ -21,7 +24,7 @@ export default function Game() {
   //   setInputValue(event.target.value);
   // };
 
-  const health = 100;
+  const health = 65;
 
   const messagesList = [
     {
@@ -117,16 +120,7 @@ export default function Game() {
       </div>
       <div className="vertical-divider"></div>
       <div className="side-panel">
-        <div className="health-bar">
-          {Array.from({ length: health / 10 }, (_, index) => (
-            <img
-              key={index}
-              src="https://cdn.pixabay.com/photo/2017/09/23/16/33/pixel-heart-2779422_1280.png"
-              className="pixelized--heart"
-              alt="heart"
-            />
-          ))}
-        </div>
+        <div className="health-bar">{renderHearts(health)}</div>
         <div className="backpack-header">Backpack</div>
         <div className="backpack-items">
           <div className="backpack-item">Sword</div>
@@ -135,5 +129,24 @@ export default function Game() {
         </div>
       </div>
     </div>
+  );
+}
+
+// Function to render hearts based on health
+function renderHearts(health: number) {
+  const fullHearts = Math.floor(health / 10); // Number of full hearts
+  const halfHeart = health % 10 >= 5; // Check if there's a half heart needed
+  const emptyHearts = 10 - fullHearts - (halfHeart ? 1 : 0); // Calculate number of empty hearts
+
+  return (
+    <>
+      {[...Array(emptyHearts)].map((_, index) => (
+        <img key={`empty-${index}`} src={heartempty} className="pixelized--heart" alt="heart" />
+      ))}
+      {halfHeart && <img key="half" src={hearthalf} className="pixelized--heart" alt="heart" />}
+      {[...Array(fullHearts)].map((_, index) => (
+        <img key={index} src={heart} className="pixelized--heart" alt="heart" />
+      ))}
+    </>
   );
 }
