@@ -41,9 +41,21 @@ export const meta: MetaFunction = () => {
 
 function Welcome() {
   return (
-    <div style={{ width: '100%', fontFamily: 'system-ui, sans-serif', lineHeight: '1.8' }}>
+    <div className="Title">
       <h1>Welcome to Zork-AI</h1>
     </div>
+  );
+}
+function CustomTheme() {
+  return (
+    <form>
+      <input
+        type="text"
+        placeholder="... Or choose your own adventure"
+        maxLength="20"
+        className="command-input custom-input"
+      ></input>
+    </form>
   );
 }
 
@@ -51,25 +63,16 @@ export default function Index() {
   return (
     <div className="main-menu">
       <Welcome />
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px' }}>
+      <div className="card-container">
         {cardData.map((card) => (
-          <Card key={card.id} style={{ maxWidth: 'calc(50% - 8px)' }} className="transition-effect">
+          <Card key={card.id} className="transition-effect">
             <CardActionArea component={Link} to={card.link}>
               <CardMedia component="img" height="140" src={card.src} alt="Play" />
               <CardContent>
-                <Typography
-                  gutterBottom
-                  variant="h5"
-                  component="div"
-                  style={{ fontFamily: 'Courier New' }}
-                >
+                <Typography gutterBottom variant="h5" component="div" className="card-text">
                   {card.title}
                 </Typography>
-                <Typography
-                  variant="body2"
-                  color="text.secondary"
-                  style={{ fontFamily: 'Courier New' }}
-                >
+                <Typography variant="body2" color="text.secondary" className="card-text">
                   {card.description}
                 </Typography>
               </CardContent>
@@ -77,6 +80,7 @@ export default function Index() {
           </Card>
         ))}
       </div>
+      <CustomTheme />
     </div>
   );
 }
