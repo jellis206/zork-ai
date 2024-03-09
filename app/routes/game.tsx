@@ -121,6 +121,7 @@ export default function Game() {
               className="command-input"
               // onKeyPress={handleKeyPress}
             />
+            <button>submit</button>
           </Form>
         </div>
       </div>
@@ -146,15 +147,17 @@ export default function Game() {
   );
 }
 
+export function loader({ request }: { request: Request }) {
+  const url = new URL(request.url);
+  const threadId = url.searchParams.get('threadId') || '';
+  return ZorkEngine.getThread(threadId);
+}
+
 export async function action({ request }: { request: Request }) {
   const formData = await request.formData();
   const threadId = formData.get('threadId') || '';
   const playerDecision = formData.get('decision') || '';
-  const zorkResponse = await ZorkEngine.postUserDecision(
-    threadId.toString(),
-    playerDecision.toString()
-  );
-  console.log(zorkResponse);
+  await ZorkEngine.postUserDecision(threadId.toString(), playerDecision.toString());
   return redirect('/game');
 }
 

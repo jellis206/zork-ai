@@ -37,4 +37,8 @@ export default class ZorkEngine {
     };
     return await ZorkAI.instance.sendMessage(threadId, message);
   }
+
+  public static async getThread(threadId: string) {
+    return await ZorkAI.instance.getMessages(threadId);
+  }
 }

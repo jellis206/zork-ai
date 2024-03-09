@@ -78,7 +78,7 @@ export default function Index() {
       <div className="card-container">
         {cardData.map((card: CardData) => (
           <div key={card.id} className="transition-effect">
-            <Link to="/game" state={() => initUserThread(card.description)}>
+            <Link to={`/game?threadId=${threadId}`} state={() => initUserThread(card.description)}>
               <img
                 className="card-img"
                 src={card.src}
