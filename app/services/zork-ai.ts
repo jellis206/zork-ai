@@ -1,8 +1,8 @@
-import * as dotenv from 'dotenv';
 import { OpenAI } from 'openai';
 import { Assistant } from 'openai/resources/beta/index.mjs';
 import { ASSISTANT_ID } from '~/core/constants';
 import { MessageContent } from '~/core/types';
+import * as dotenv from 'dotenv';
 
 export class ZorkAI {
   private openai: OpenAI;
@@ -16,9 +16,7 @@ export class ZorkAI {
   }
 
   private constructor() {
-    // Load environment variables from .env file
-    dotenv.config({ path: '../.env' }); // Adjust the path as needed
-    // Get API key from environment variable
+    dotenv.config({ path: '../../.env' });
     const apiKey = process.env.OPEN_AI_KEY;
     if (!apiKey) {
       throw new Error('OPEN_AI_KEY environment variable not found');

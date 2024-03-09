@@ -5,9 +5,8 @@ import hearthalf from '~/assets/heart-half.png';
 import heartempty from '~/assets/heart-empty.png';
 import backpack from '~/assets/backpack.png';
 import ZorkEngine from '~/services/zork-engine';
-import { Form, redirect, useLoaderData } from '@remix-run/react';
-import { useEffect, useLayoutEffect, useState } from 'react';
-import { THREAD_ID_KEY } from '~/core/constants';
+import { Form, redirect, useLoaderData, useSearchParams } from '@remix-run/react';
+import { useState } from 'react';
 import { TypedResponse } from '@remix-run/node';
 
 export async function loader({
@@ -26,28 +25,10 @@ export async function loader({
 
 export default function Game() {
   const [threadId, setThreadId] = useState('');
+  const [searchParams] = useSearchParams();
+  const threadIdParam = searchParams.get('threadId');
+  setThreadId(threadIdParam || '');
   const messages = useLoaderData();
-
-  const initThreadId = async (localStorage: Storage, threadId?: string) => {
-    if (!threadId) {
-      threadId = await ZorkEngine.startNewThread();
-      localStorage.setItem(THREAD_ID_KEY, threadId);
-    }
-    setThreadId(threadId);
-    console.log('threadId', threadId);
-  };
-
-  // Synchronize initially
-  useLayoutEffect(() => {
-    const localStorage = window.localStorage;
-    const threadId = localStorage.getItem(THREAD_ID_KEY) ?? '';
-    initThreadId(localStorage, threadId);
-  }, []);
-
-  // Synchronize on change
-  useEffect(() => {
-    window.localStorage.setItem(THREAD_ID_KEY, threadId);
-  }, [threadId]);
 
   const health = 65;
 
