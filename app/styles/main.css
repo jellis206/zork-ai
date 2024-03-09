@@ -1,46 +1,45 @@
 body {
-    background-color:black;
+  background-color: black;
 }
 
 .command-terminal-container {
-    font-family: monospace;
-    background-color: #000;
-    color: #fff;
-    padding: 20px;
-    border-radius: 5px;
-    width: 400px; /* Adjust the width as needed */
-    margin: 0 auto; /* Centers the div horizontally */
-    margin-top: 50px;
-  }
-  
-  .command-output {
-    margin-bottom: 20px;
-  }
-  
-  .command-input-container {
-    display: flex;
-    align-items: center;
-  }
-  
-  .command-input {
-    flex: 1;
-    margin-right: 10px;
-    padding: 8px;
-    border: none;
-    border-radius: 3px;
-    background-color: #333;
-    color: #fff;
-  }
-  
-  .execute-button {
-    padding: 8px 15px;
-    background-color: #007bff;
-    color: #fff;
-    border: none;
-    border-radius: 3px;
-    cursor: pointer;
-  }
-  
+  font-family: monospace;
+  background-color: #000;
+  color: #fff;
+  padding: 20px;
+  border-radius: 5px;
+  width: 400px; /* Adjust the width as needed */
+  margin: 0 auto; /* Centers the div horizontally */
+  margin-top: 50px;
+}
+
+.command-output {
+  margin-bottom: 20px;
+}
+
+.command-input-container {
+  display: flex;
+  align-items: center;
+}
+
+.command-input {
+  flex: 1;
+  margin-right: 10px;
+  padding: 8px;
+  border: none;
+  border-radius: 3px;
+  background-color: #333;
+  color: #fff;
+}
+
+.execute-button {
+  padding: 8px 15px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+}
 
 /* main.css */
 body {
@@ -55,8 +54,8 @@ body {
   font-family: 'VT323', monospace;
 }
 
-typography{
-    background-color: #000;
+typography {
+  background-color: #000;
 }
 
 .container {
@@ -70,7 +69,7 @@ h1 {
   overflow: hidden; /* Hide overflow */
   white-space: nowrap; /* Prevent line breaks */
   border-right: 2px solid #fff; /* Create blinking cursor */
-  animation: typing 2s steps(20) forwards; 
+  animation: typing 2s steps(20) forwards;
 }
 
 @keyframes typing {
@@ -81,7 +80,6 @@ h1 {
     width: 350px; /* End with full width */
   }
 }
-
 
 a {
   text-decoration: none;
