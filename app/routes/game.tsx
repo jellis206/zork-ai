@@ -4,6 +4,7 @@ import heart from '~/assets/heart.png';
 import hearthalf from '~/assets/heart-half.png';
 import heartempty from '~/assets/heart-empty.png';
 import ZorkEngine from '~/services/zork-engine';
+import useThreadId from '~/hooks/use-user-id';
 
 export default function Game() {
   const [threadId] = useThreadId();
