@@ -13,6 +13,10 @@ body {
   font-family: 'VT323', monospace;
 }
 
+typography{
+    background-color: #000;
+}
+
 .container {
   max-width: 600px;
   padding: 0 20px;
