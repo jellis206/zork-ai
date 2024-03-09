@@ -73,18 +73,15 @@ h1 {
   animation: typing 2s steps(20) forwards; 
 }
 
-
-
-
-
 @keyframes typing {
   from {
     width: 0; /* Start with no width */
   }
   to {
-    width: 100%; /* End with full width */
+    width: 350px; /* End with full width */
   }
 }
+
 
 a {
   text-decoration: none;
@@ -93,4 +90,8 @@ a {
 
 a:hover {
   text-decoration: underline;
+}
+
+transition-effect {
+  transition: opacity 3s ease-in-out;
 }

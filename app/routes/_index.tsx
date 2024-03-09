@@ -48,13 +48,21 @@ export const meta: MetaFunction = () => {
   ];
 };
 
-export default function Index() {
+function Welcome() {
   return (
     <div style={{ fontFamily: "system-ui, sans-serif", lineHeight: "1.8" }}>
       <h1>Welcome to Zork-AI</h1>
+    </div>
+  );
+}
+
+export default function Index() {
+  return (
+    <div>
+      <Welcome />
       <div style={{ display: "flex", flexWrap: "wrap", gap: "16px" }}>
         {cardData.map((card) => (
-          <Card key={card.id} style={{ maxWidth: "calc(50% - 8px)" }}>
+          <Card key={card.id} style={{ maxWidth: "calc(50% - 8px)" }} className="transition-effect">
             <CardActionArea component={Link} to={card.link}>
               <CardMedia
                 component="img"
