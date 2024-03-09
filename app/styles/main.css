@@ -41,3 +41,56 @@ body {
     cursor: pointer;
   }
   
+
+/* main.css */
+body {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #000;
+  color: #fff;
+  font-family: 'VT323', monospace;
+}
+
+typography{
+    background-color: #000;
+}
+
+.container {
+  max-width: 600px;
+  padding: 0 20px;
+}
+
+h1 {
+  text-align: center;
+  font-family: 'VT323', monospace;
+  overflow: hidden; /* Hide overflow */
+  white-space: nowrap; /* Prevent line breaks */
+  border-right: 2px solid #fff; /* Create blinking cursor */
+  animation: typing 2s steps(20) forwards; 
+}
+
+
+
+
+
+@keyframes typing {
+  from {
+    width: 0; /* Start with no width */
+  }
+  to {
+    width: 100%; /* End with full width */
+  }
+}
+
+a {
+  text-decoration: none;
+  color: #007bff;
+}
+
+a:hover {
+  text-decoration: underline;
+}
