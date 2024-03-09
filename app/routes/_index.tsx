@@ -17,7 +17,7 @@ const cardData = [
     id: 2,
     src: 'https://kslsports.com/wp-content/uploads/2021/04/byu-cosmo-mascot-cheer-620x370.png',
     title: 'Mormon Mobsters',
-    description: 'Become one of the Cosmos'
+    description: 'Become Cosmo'
   },
   {
     id: 3,
@@ -27,9 +27,9 @@ const cardData = [
   },
   {
     id: 4,
-    src: 'https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/57c09c1b-2eb9-4e46-8d05-3255d11b2a58/d2vvfzc-be5ebf5a-2ffe-477e-b8ee-3045ad746815.jpg/v1/fill/w_900,h_569,q_75,strp/curve_into_mystery_wallpaper_by_lowjacker_d2vvfzc-fullview.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9NTY5IiwicGF0aCI6IlwvZlwvNTdjMDljMWItMmViOS00ZTQ2LThkMDUtMzI1NWQxMWIyYTU4XC9kMnZ2ZnpjLWJlNWViZjVhLTJmZmUtNDc3ZS1iOGVlLTMwNDVhZDc0NjgxNS5qcGciLCJ3aWR0aCI6Ijw9OTAwIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmltYWdlLm9wZXJhdGlvbnMiXX0.y4Mf0bqMTag8tBpxzF7QgYmTJe4ioC6QJgpYEmxlSsY',
-    title: 'Custom',
-    description: 'Choose your own theme'
+    src: 'https://upload.wikimedia.org/wikipedia/commons/0/0c/Mars_-_August_30_2021_-_Flickr_-_Kevin_M._Gill.png',
+    title: 'Terraform Mars',
+    description: 'Become a Cosmonaut'
   }
 ];
 
@@ -39,9 +39,21 @@ export const meta: MetaFunction = () => {
 
 function Welcome() {
   return (
-    <div style={{ width: '100%', fontFamily: 'system-ui, sans-serif', lineHeight: '1.8' }}>
+    <div className="Title">
       <h1>Welcome to Zork-AI</h1>
     </div>
+  );
+}
+function CustomTheme() {
+  return (
+    <form>
+      <input
+        type="text"
+        placeholder="... Or choose your own adventure"
+        maxLength={20}
+        className="command-input custom-input"
+      ></input>
+    </form>
   );
 }
 
@@ -56,17 +68,18 @@ export default function Index() {
   return (
     <div className="main-menu">
       <Welcome />
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px' }}>
+      <div className="card-container">
         {cardData.map((card) => (
           <Card key={card.id} style={{ maxWidth: 'calc(50% - 8px)' }} className="transition-effect">
             <Link to="/game" state={() => initUserThread(card.description)}>
-              <CardActionArea onClick={() => initUserThread(card.description)}>
+              <CardActionArea>
                 <CardMedia component="img" height="140" src={card.src} alt="Play" />
                 <CardContent>
                   <Typography
                     gutterBottom
                     variant="h5"
                     component="div"
+                    className="card-text"
                     style={{ fontFamily: 'Courier New' }}
                   >
                     {card.title}
@@ -74,6 +87,7 @@ export default function Index() {
                   <Typography
                     variant="body2"
                     color="text.secondary"
+                    className="card-text"
                     style={{ fontFamily: 'Courier New' }}
                   >
                     {card.description}
@@ -84,6 +98,7 @@ export default function Index() {
           </Card>
         ))}
       </div>
+      <CustomTheme />
     </div>
   );
 }

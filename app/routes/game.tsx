@@ -117,10 +117,9 @@ export default function Game() {
               type="text"
               name="decision"
               autoFocus // eslint-disable-line jsx-a11y/no-autofocus
-              placeholder=""
+              placeholder="" // eslint-disable-line jsx-a11y/label-has-associated-control
               className="command-input"
               // onKeyPress={handleKeyPress}
-              style={{ width: '400px' }} // Adjust the width as needed
             />
           </Form>
         </div>
