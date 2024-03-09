@@ -13,7 +13,7 @@ if (!OPEN_AI_KEY) {
 }
 
 const clientOptions = {
-  apiKey: OPEN_AI_KEY,
+  apiKey: OPEN_AI_KEY
 };
 
 const openai = new OpenAI(clientOptions);
@@ -29,13 +29,13 @@ const content = JSON.stringify({
   health: 100,
   situation: 'Player is standing in front of a large white house. There is a mailbox there.',
   items: [],
-  player_decision: 'I want to open the mailbox.',
+  player_decision: 'I want to open the mailbox.'
 });
 
 // Add a message to the thread
 await openai.beta.threads.messages.create(thread.id, {
   role: 'user',
-  content,
+  content
 });
 
 // Create a run

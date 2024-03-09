@@ -5,94 +5,65 @@ import hearthalf from '~/assets/heart-half.png';
 import heartempty from '~/assets/heart-empty.png';
 import backpack from '~/assets/backpack.png';
 import ZorkEngine from '~/services/zork-engine';
-import useThreadId from '~/hooks/use-user-id';
-import { Form, redirect } from '@remix-run/react';
+import { Form, redirect, useLoaderData } from '@remix-run/react';
+import { useEffect, useLayoutEffect, useState } from 'react';
+import { THREAD_ID_KEY } from '~/core/constants';
+import { TypedResponse } from '@remix-run/node';
+
+export async function loader({
+  request
+}: {
+  request: Request;
+}): Promise<string[] | TypedResponse<never>> {
+  const url = new URL(request.url);
+  let threadId = url.searchParams.get('threadId') || '';
+  if (!threadId) {
+    threadId = await ZorkEngine.startNewThread();
+    return redirect(`/game?threadId=${threadId}`);
+  }
+  return ZorkEngine.getThread(threadId);
+}
 
 export default function Game() {
-  const [threadId] = useThreadId();
-  // const [inputValue, setInputValue] = useState<string>('');
-  // const [outputValue, setOutputValue] = useState<string>('');
+  const [threadId, setThreadId] = useState('');
+  const messages = useLoaderData();
 
-  // const handleKeyPress = (event) => {
-  //   if (event.key === 'Enter') {
-  //     // Call your function here
-  //     handleEnterPress();
-  //   }
-  // };
+  const initThreadId = async (localStorage: Storage, threadId?: string) => {
+    if (!threadId) {
+      threadId = await ZorkEngine.startNewThread();
+      localStorage.setItem(THREAD_ID_KEY, threadId);
+    }
+    setThreadId(threadId);
+    console.log('threadId', threadId);
+  };
 
-  // const handleEnterPress = () => {
-  //   console.log('Enter key pressed!');
-  //   // Add your logic here
-  // };
+  // Synchronize initially
+  useLayoutEffect(() => {
+    const localStorage = window.localStorage;
+    const threadId = localStorage.getItem(THREAD_ID_KEY) ?? '';
+    initThreadId(localStorage, threadId);
+  }, []);
 
-  // const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-  //   setInputValue(event.target.value);
-  // };
+  // Synchronize on change
+  useEffect(() => {
+    window.localStorage.setItem(THREAD_ID_KEY, threadId);
+  }, [threadId]);
 
   const health = 65;
 
-  const messagesList = [
-    {
-      role: 'ZorkBot',
-      text: 'You are standing in an open field west of a white house, with a boarded front door. There is a small mailbox here.'
-    },
-    {
-      role: 'Player',
-      text: 'I want to open the mailbox.'
-    },
-    {
-      role: 'ZorkBot',
-      text: 'Opening the mailbox reveals a leaflet.'
-    },
-    {
-      role: 'Player',
-      text: 'I want to read the leaflet.'
-    },
-    {
-      role: 'ZorkBot',
-      text: 'Welcome to Zork! You are about to embark on a journey into the world of Zork. Your mission is to find the treasures hidden throughout the land. Be warned, the land is filled with danger and you will need to use your wits to survive.'
-    },
-    {
-      role: 'ZorkBot',
-      text: 'You are standing in an open field west of a white house, with a boarded front door. There is a small mailbox here.'
-    },
-    {
-      role: 'Player',
-      text: 'I want to open the mailbox.'
-    },
-    {
-      role: 'ZorkBot',
-      text: 'Opening the mailbox reveals a leaflet.'
-    },
-    {
-      role: 'Player',
-      text: 'I want to read the leaflet.'
-    },
-    {
-      role: 'ZorkBot',
-      text: 'Welcome to Zork! You are about to embark on a journey into the world of Zork. Your mission is to find the treasures hidden throughout the land. Be warned, the land is filled with danger and you will need to use your wits to survive.'
-    },
-    {
-      role: 'ZorkBot',
-      text: 'You are standing in an open field west of a white house, with a boarded front door. There is a small mailbox here.'
-    },
-    {
-      role: 'Player',
-      text: 'I want to open the mailbox.'
-    },
-    {
-      role: 'ZorkBot',
-      text: 'Opening the mailbox reveals a leaflet.'
-    },
-    {
-      role: 'Player',
-      text: 'I want to read the leaflet.'
-    },
-    {
-      role: 'ZorkBot',
-      text: 'Welcome to Zork! You are about to embark on a journey into the world of Zork. Your mission is to find the treasures hidden throughout the land. Be warned, the land is filled with danger and you will need to use your wits to survive.'
-    }
-  ];
+  const messagesList =
+    Array.isArray(messages) && messages.length > 0
+      ? messages
+      : [
+          {
+            role: 'ZorkBot',
+            text: 'You are standing in an open field west of a white house, with a boarded front door. There is a small mailbox here.'
+          },
+          {
+            role: 'Player',
+            text: 'I want to open the mailbox.'
+          }
+        ];
 
   return (
     <div className="game-screen">
@@ -147,18 +118,12 @@ export default function Game() {
   );
 }
 
-export function loader({ request }: { request: Request }) {
-  const url = new URL(request.url);
-  const threadId = url.searchParams.get('threadId') || '';
-  return ZorkEngine.getThread(threadId);
-}
-
 export async function action({ request }: { request: Request }) {
   const formData = await request.formData();
   const threadId = formData.get('threadId') || '';
   const playerDecision = formData.get('decision') || '';
   await ZorkEngine.postUserDecision(threadId.toString(), playerDecision.toString());
-  return redirect('/game');
+  return redirect(`/game?threadId=${threadId})`);
 }
 
 // Function to render hearts based on health

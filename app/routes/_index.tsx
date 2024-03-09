@@ -1,7 +1,8 @@
 import { Link } from 'react-router-dom';
 import '~/styles/main.css';
-import useThreadId from '~/hooks/use-user-id';
 import ZorkEngine from '~/services/zork-engine';
+import { THREAD_ID_KEY } from '~/core/constants';
+import { useEffect, useLayoutEffect, useState } from 'react';
 
 // Define types for card data
 interface CardData {
@@ -65,8 +66,30 @@ function CustomTheme() {
 }
 
 export default function Index() {
-  const [threadId, setThreadId] = useThreadId();
-  const initUserThread = async (theme: string) => {
+  const [threadId, setThreadId] = useState('');
+
+  const initThreadId = async (threadId?: string) => {
+    if (!threadId) {
+      threadId = await ZorkEngine.startNewThread();
+      localStorage.setItem(THREAD_ID_KEY, threadId);
+    }
+    setThreadId(threadId);
+  };
+
+  // Synchronize initially
+  useLayoutEffect(() => {
+    const localStorage = window.localStorage;
+    const threadId = localStorage.getItem(THREAD_ID_KEY) ?? '';
+    initThreadId(threadId);
+  }, []);
+
+  // Synchronize on change
+  useEffect(() => {
+    window.localStorage.setItem(THREAD_ID_KEY, threadId);
+  }, [threadId]);
+
+  async (theme: string) => {
+    console.log(threadId, theme);
     const { newThreadId, startMessage } = await ZorkEngine.startNewGame(threadId, theme);
     setThreadId(newThreadId);
     return startMessage;
@@ -78,7 +101,15 @@ export default function Index() {
       <div className="card-container">
         {cardData.map((card: CardData) => (
           <div key={card.id} className="transition-effect">
-            <Link to={`/game?threadId=${threadId}`} state={() => initUserThread(card.description)}>
+            <Link
+              to={
+                {
+                  pathname: `/game`,
+                  search: `?threadId=${threadId}`,
+                  state: { threadDescription: card.description } // Pass serializable data instead of a function
+                } as { pathname: string; state: { threadDescription: string } }
+              }
+            >
               <img
                 className="card-img"
                 src={card.src}

@@ -41,4 +41,8 @@ export default class ZorkEngine {
   public static async getThread(threadId: string) {
     return await ZorkAI.instance.getMessages(threadId);
   }
+
+  public static async startNewThread(): Promise<string> {
+    return await ZorkAI.instance.startNewThread();
+  }
 }
