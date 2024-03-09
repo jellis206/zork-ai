@@ -66,7 +66,7 @@ function CustomTheme() {
 
 export default function Index() {
   const [threadId, setThreadId] = useThreadId();
-  const initUserThread = async (theme: string) => {
+  async (theme: string) => {
     const { newThreadId, startMessage } = await ZorkEngine.startNewGame(threadId, theme);
     setThreadId(newThreadId);
     return startMessage;
@@ -78,7 +78,14 @@ export default function Index() {
       <div className="card-container">
         {cardData.map((card: CardData) => (
           <div key={card.id} className="transition-effect">
-            <Link to="/game" state={() => initUserThread(card.description)}>
+            <Link
+              to={
+                {
+                  pathname: '/game',
+                  state: { threadDescription: card.description } // Pass serializable data instead of a function
+                } as { pathname: string; state: { threadDescription: string } }
+              }
+            >
               <img
                 className="card-img"
                 src={card.src}
