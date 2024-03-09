@@ -57,10 +57,19 @@ export default function Index() {
             <CardActionArea component={Link} to={card.link}>
               <CardMedia component="img" height="140" src={card.src} alt="Play" />
               <CardContent>
-                <Typography gutterBottom variant="h5" component="div">
+                <Typography
+                  gutterBottom
+                  variant="h5"
+                  component="div"
+                  style={{ fontFamily: 'Courier New' }}
+                >
                   {card.title}
                 </Typography>
-                <Typography variant="body2" color="text.secondary">
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  style={{ fontFamily: 'Courier New' }}
+                >
                   {card.description}
                 </Typography>
               </CardContent>

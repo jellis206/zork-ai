@@ -106,19 +106,32 @@ typography {
 }
 
 h1 {
-  text-align: left;
-  overflow: hidden; /* Hide overflow */
-  white-space: nowrap; /* Prevent line breaks */
-  border-right: 2px solid #fff; /* Create blinking cursor */
-  animation: typing 2s steps(20) forwards;
+  text-align: center;
+  font-family: 'VT323', monospace;
+  overflow: hidden;
+  white-space: nowrap;
+  border-right: 2px solid #fff;
+  animation:
+    typing 2s steps(20) forwards,
+    blinkCursor 1s infinite;
 }
 
 @keyframes typing {
   from {
-    width: 0; /* Start with no width */
+    width: 0;
   }
   to {
-    width: 350px; /* End with full width */
+    width: 350px;
+  }
+}
+
+@keyframes blinkCursor {
+  from,
+  to {
+    border-color: transparent;
+  }
+  50% {
+    border-color: #fff;
   }
 }
 
