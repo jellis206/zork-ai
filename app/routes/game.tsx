@@ -1,12 +1,10 @@
-// import { useState } from 'react';
-// import { TextField, Button, Container, Typography, Input } from '@mui/material';
 import heart from '~/assets/heart.png';
 import hearthalf from '~/assets/heart-half.png';
 import heartempty from '~/assets/heart-empty.png';
 import backpack from '~/assets/backpack.png';
 import ZorkEngine from '~/services/zork-engine';
 import { Form, redirect, useLoaderData, useSearchParams } from '@remix-run/react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { TypedResponse } from '@remix-run/node';
 
 export async function loader({
@@ -27,7 +25,11 @@ export default function Game() {
   const [threadId, setThreadId] = useState('');
   const [searchParams] = useSearchParams();
   const threadIdParam = searchParams.get('threadId');
-  setThreadId(threadIdParam || '');
+
+  useEffect(() => {
+    setThreadId(threadIdParam || '');
+  }, [threadIdParam]);
+
   const messages = useLoaderData();
 
   const health = 65;
@@ -104,7 +106,7 @@ export async function action({ request }: { request: Request }) {
   const threadId = formData.get('threadId') || '';
   const playerDecision = formData.get('decision') || '';
   await ZorkEngine.postUserDecision(threadId.toString(), playerDecision.toString());
-  return redirect(`/game?threadId=${threadId})`);
+  return redirect(`/game?threadId=${threadId}`);
 }
 
 // Function to render hearts based on health

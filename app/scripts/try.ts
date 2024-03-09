@@ -1,8 +1,10 @@
-import * as dotenv from 'dotenv';
+// npm run dev
+
+import dotenv from 'dotenv';
 import { OpenAI } from 'openai';
 
 // Load environment variables from .env file
-dotenv.config({ path: '../../.env' }); // Adjust the path as needed
+dotenv.config(); // Adjust the path as needed
 
 // Get API key from environment variable
 const OPEN_AI_KEY = process.env.OPEN_AI_KEY;

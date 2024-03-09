@@ -16,7 +16,7 @@ export class ZorkAI {
   }
 
   private constructor() {
-    dotenv.config({ path: '../../.env' });
+    dotenv.config();
     const apiKey = process.env.OPEN_AI_KEY;
     if (!apiKey) {
       throw new Error('OPEN_AI_KEY environment variable not found');
