@@ -1,5 +1,4 @@
 import type { MetaFunction } from '@remix-run/node';
-import styles from '~/styles/main.css';
 import { Card, CardActionArea, CardContent, CardMedia, Typography } from '@mui/material';
 import { Link } from 'react-router-dom';
 
@@ -70,8 +69,4 @@ export default function Index() {
       </div>
     </div>
   );
-}
-
-export function links() {
-  return [{ rel: 'stylesheet', href: styles }];
 }

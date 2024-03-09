@@ -1,13 +1,6 @@
-import {
-  Links,
-  Meta,
-  Outlet,
-  Scripts,
-  ScrollRestoration,
-} from "@remix-run/react";
-
-import styles from "~/styles/main.css";
-
+import { LinksFunction } from '@remix-run/node';
+import styles from '~/styles/main.css';
+import { Links, Meta, Outlet, Scripts, ScrollRestoration } from '@remix-run/react';
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
@@ -27,11 +20,15 @@ export function Layout({ children }: { children: React.ReactNode }) {
   );
 }
 
+export const links: LinksFunction = () => {
+  return [
+    {
+      rel: 'stylesheet',
+      href: styles,
+    },
+  ];
+};
+
 export default function App() {
   return <Outlet />;
-}
-
-
-export function links() {
-  return [{ rel: "stylesheet", href: styles }];
 }

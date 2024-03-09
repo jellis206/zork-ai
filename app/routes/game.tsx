@@ -1,27 +1,10 @@
-// import { useState } from 'react';
+import { useState } from 'react';
 // import { TextField, Button, Container, Typography, Input } from '@mui/material';
 
 export default function Game() {
-  // const [inputValue, setInputValue] = useState<string>('');
+  const [inputValue, setInputValue] = useState<string>('');
   // const [outputValue, setOutputValue] = useState<string>('');
-
-  // const handleKeyPress = (event) => {
-  //   if (event.key === 'Enter') {
-  //     // Call your function here
-  //     handleEnterPress();
-  //   }
-  // };
-
-  // const handleEnterPress = () => {
-  //   console.log('Enter key pressed!');
-  //   // Add your logic here
-  // };
-
-  // const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-  //   setInputValue(event.target.value);
-  // };
-
-  const messagesList = [
+  const [messagesList, setMessagesList] = useState<Array<{ role: string; text: string }>>([
     {
       role: 'ZorkBot',
       text: 'You are standing in an open field west of a white house, with a boarded front door. There is a small mailbox here.',
@@ -42,7 +25,26 @@ export default function Game() {
       role: 'ZorkBot',
       text: 'Welcome to Zork! You are about to embark on a journey into the world of Zork. Your mission is to find the treasures hidden throughout the land. Be warned, the land is filled with danger and you will need to use your wits to survive.',
     },
-  ];
+  ]);
+  const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>, value: string) => {
+    if (event.key === 'Enter') {
+      const newMessage = {
+        role: 'Player',
+        text: value,
+      };
+      setMessagesList((prevMessages) => [...prevMessages, newMessage]);
+      setInputValue('');
+    }
+  };
+
+  const submitStuff = () => {
+    const newMessage = {
+      role: 'Player',
+      text: inputValue,
+    };
+    setMessagesList((prevMessages) => [...prevMessages, newMessage]);
+    setInputValue('');
+  };
 
   return (
     <div className="command-terminal-container">
@@ -60,15 +62,18 @@ export default function Game() {
       </div>
       <div className="command-input-container">
         <div className="command-prompt">&gt;</div>
-        <form>
+        <form onSubmit={(event) => event.preventDefault()}>
           <input
             type="text"
             autoFocus // eslint-disable-line jsx-a11y/no-autofocus
             placeholder=""
+            value={inputValue}
             className="command-input"
-            // onKeyPress={handleKeyPress}
+            onChange={(event) => setInputValue(event.target.value)}
+            onKeyDown={(event) => handleKeyPress(event, inputValue)}
             style={{ width: '400px' }} // Adjust the width as needed
           />
+          <button onClick={submitStuff}>Button</button>
         </form>
       </div>
     </div>
