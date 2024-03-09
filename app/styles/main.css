@@ -1,0 +1,43 @@
+body {
+    background-color:black;
+}
+
+.command-terminal-container {
+    font-family: monospace;
+    background-color: #000;
+    color: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    width: 400px; /* Adjust the width as needed */
+    margin: 0 auto; /* Centers the div horizontally */
+    margin-top: 50px;
+  }
+  
+  .command-output {
+    margin-bottom: 20px;
+  }
+  
+  .command-input-container {
+    display: flex;
+    align-items: center;
+  }
+  
+  .command-input {
+    flex: 1;
+    margin-right: 10px;
+    padding: 8px;
+    border: none;
+    border-radius: 3px;
+    background-color: #333;
+    color: #fff;
+  }
+  
+  .execute-button {
+    padding: 8px 15px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+  }
+  
