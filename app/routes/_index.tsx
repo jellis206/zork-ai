@@ -70,7 +70,7 @@ export default function Index() {
       <Welcome />
       <div className="card-container">
         {cardData.map((card) => (
-          <Card key={card.id} style={{ maxWidth: 'calc(50% - 8px)' }} className="transition-effect">
+          <Card key={card.id} className="transition-effect">
             <Link to="/game" state={() => initUserThread(card.description)}>
               <CardActionArea>
                 <CardMedia component="img" height="140" src={card.src} alt="Play" />
