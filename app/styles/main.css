@@ -1,25 +1,39 @@
+/* main.css */
 body {
-  background-color: black;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  height: 100vh;
+  background-color: #000;
+  color: #fff;
+  font-family: 'VT323', monospace;
+  font-size: 1.2rem;
+}
+
+.main-menu {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
 }
 
 .command-terminal-container {
-  font-family: monospace;
   background-color: #000;
   color: #fff;
   padding: 20px;
   border-radius: 5px;
-  width: 400px; /* Adjust the width as needed */
-  margin: 0 auto; /* Centers the div horizontally */
-  margin-top: 50px;
+  margin: 4rem; /* Centers the div horizontally */
+  margin-top: 2rem;
+
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
 }
 
 .command-output {
   margin-bottom: 20px;
-}
-
-.command-input-container {
-  display: flex;
-  align-items: center;
 }
 
 .command-input {
@@ -28,30 +42,55 @@ body {
   padding: 8px;
   border: none;
   border-radius: 3px;
-  background-color: #333;
+  background-color: transparent;
   color: #fff;
+  font-family: 'VT323', monospace;
+  font-size: 1.2rem;
+}
+
+.command-input:focus,
+.command-input:active,
+.command-input:focus-visible {
+  border: none;
+  border-color: pink;
+  outline: none;
+}
+
+.command-prompt {
+  display: flex;
+  align-self: center;
+}
+
+.command-input-container {
+  display: flex;
+}
+
+.command-input::before {
+  content: '>';
+  margin-right: 5px;
+}
+
+.command-messages {
+  display: flex;
+  flex-direction: column;
+}
+
+.message {
+  margin-bottom: 1rem;
+}
+
+.message-role {
+  color: #39ff14;
 }
 
 .execute-button {
-  padding: 8px 15px;
+  /* padding: 8px 15px;
   background-color: #007bff;
   color: #fff;
   border: none;
   border-radius: 3px;
-  cursor: pointer;
-}
-
-/* main.css */
-body {
-  margin: 0;
-  padding: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  background-color: #000;
-  color: #fff;
-  font-family: 'VT323', monospace;
+  cursor: pointer; */
+  display: none;
 }
 
 typography {
@@ -64,8 +103,7 @@ typography {
 }
 
 h1 {
-  text-align: center;
-  font-family: 'VT323', monospace;
+  text-align: left;
   overflow: hidden; /* Hide overflow */
   white-space: nowrap; /* Prevent line breaks */
   border-right: 2px solid #fff; /* Create blinking cursor */

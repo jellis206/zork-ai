@@ -41,7 +41,7 @@ export const meta: MetaFunction = () => {
 
 function Welcome() {
   return (
-    <div style={{ fontFamily: 'system-ui, sans-serif', lineHeight: '1.8' }}>
+    <div style={{ width: '100%', fontFamily: 'system-ui, sans-serif', lineHeight: '1.8' }}>
       <h1>Welcome to Zork-AI</h1>
     </div>
   );
@@ -49,7 +49,7 @@ function Welcome() {
 
 export default function Index() {
   return (
-    <div>
+    <div className="main-menu">
       <Welcome />
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px' }}>
         {cardData.map((card) => (

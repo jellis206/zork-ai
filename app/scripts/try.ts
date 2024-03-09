@@ -1,3 +1,5 @@
+// npm run dev
+
 import * as dotenv from 'dotenv';
 import { OpenAI } from 'openai';
 
