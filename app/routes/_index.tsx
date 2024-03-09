@@ -16,7 +16,7 @@ const cardData = [
     id: 2,
     src: 'https://kslsports.com/wp-content/uploads/2021/04/byu-cosmo-mascot-cheer-620x370.png',
     title: 'Mormon Mobsters',
-    description: 'Become one of the Cosmos',
+    description: 'Become Cosmo',
     link: '/game',
   },
   {
@@ -28,9 +28,9 @@ const cardData = [
   },
   {
     id: 4,
-    src: 'https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/57c09c1b-2eb9-4e46-8d05-3255d11b2a58/d2vvfzc-be5ebf5a-2ffe-477e-b8ee-3045ad746815.jpg/v1/fill/w_900,h_569,q_75,strp/curve_into_mystery_wallpaper_by_lowjacker_d2vvfzc-fullview.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9NTY5IiwicGF0aCI6IlwvZlwvNTdjMDljMWItMmViOS00ZTQ2LThkMDUtMzI1NWQxMWIyYTU4XC9kMnZ2ZnpjLWJlNWViZjVhLTJmZmUtNDc3ZS1iOGVlLTMwNDVhZDc0NjgxNS5qcGciLCJ3aWR0aCI6Ijw9OTAwIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmltYWdlLm9wZXJhdGlvbnMiXX0.y4Mf0bqMTag8tBpxzF7QgYmTJe4ioC6QJgpYEmxlSsY',
-    title: 'Custom',
-    description: 'Choose your own theme',
+    src: 'https://upload.wikimedia.org/wikipedia/commons/0/0c/Mars_-_August_30_2021_-_Flickr_-_Kevin_M._Gill.png',
+    title: 'Terraform Mars',
+    description: 'Become a Cosmonaut',
     link: '/game',
   },
 ];
@@ -52,7 +52,7 @@ function CustomTheme() {
       <input
         type="text"
         placeholder="... Or choose your own adventure"
-        maxLength="20"
+        maxLength={20}
         className="command-input custom-input"
       ></input>
     </form>
