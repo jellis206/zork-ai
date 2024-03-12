@@ -177,7 +177,6 @@ transition-effect {
 .vertical-divider {
   border-left: 1px solid #fff;
   height: 100%;
-  /* margin: 0 1rem; */
 }
 
 .side-panel {
@@ -227,10 +226,6 @@ transition-effect {
     margin-right: 2rem;
   }
 
-  /* .vertical-divider {
-    position: fixed;
-    right: 20rem;
-  } */
   .main-menu {
     margin: 0 auto;
   }
