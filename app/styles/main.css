@@ -48,6 +48,7 @@ body {
   flex-direction: column;
   align-items: flex-start;
   justify-content: flex-start;
+  flex: 1 1 auto;
 }
 
 .command-output {
@@ -95,10 +96,6 @@ body {
 .command-messages {
   display: flex;
   flex-direction: column;
-}
-
-.side-panel {
-  margin: 4.5rem;
 }
 
 .message {
@@ -173,19 +170,22 @@ transition-effect {
 
 .game-screen {
   display: flex;
+  width: 100%;
+  min-height: 100vh;
 }
 
 .vertical-divider {
   border-left: 1px solid #fff;
   height: 100%;
-  margin: 0 1rem;
+  /* margin: 0 1rem; */
 }
 
 .side-panel {
   text-align: right;
   position: sticky;
-  top: 4.5rem;
-  width: 10rem;
+  top: 2rem;
+  margin: 2rem 2rem;
+  max-width: 12rem;
   height: 80vh;
 }
 
@@ -227,11 +227,15 @@ transition-effect {
     margin-right: 2rem;
   }
 
-  .vertical-divider {
+  /* .vertical-divider {
     position: fixed;
     right: 20rem;
-  }
+  } */
   .main-menu {
     margin: 0 auto;
+  }
+
+  .side-panel {
+    margin: 4.5rem;
   }
 }
