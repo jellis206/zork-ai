@@ -1,13 +1,10 @@
-// import { useState } from 'react';
-// import { TextField, Button, Container, Typography, Input } from '@mui/material';
 import heart from '~/assets/heart.png';
 import hearthalf from '~/assets/heart-half.png';
 import heartempty from '~/assets/heart-empty.png';
 import backpack from '~/assets/backpack.png';
 import ZorkEngine from '~/services/zork-engine';
-import { Form, redirect, useLoaderData } from '@remix-run/react';
-import { useEffect, useLayoutEffect, useState } from 'react';
-import { THREAD_ID_KEY } from '~/core/constants';
+import { Form, redirect, useLoaderData, useSearchParams } from '@remix-run/react';
+import { useEffect, useState } from 'react';
 import { TypedResponse } from '@remix-run/node';
 
 export async function loader({
@@ -26,28 +23,14 @@ export async function loader({
 
 export default function Game() {
   const [threadId, setThreadId] = useState('');
-  const messages = useLoaderData();
+  const [searchParams] = useSearchParams();
+  const threadIdParam = searchParams.get('threadId');
 
-  const initThreadId = async (localStorage: Storage, threadId?: string) => {
-    if (!threadId) {
-      threadId = await ZorkEngine.startNewThread();
-      localStorage.setItem(THREAD_ID_KEY, threadId);
-    }
-    setThreadId(threadId);
-    console.log('threadId', threadId);
-  };
-
-  // Synchronize initially
-  useLayoutEffect(() => {
-    const localStorage = window.localStorage;
-    const threadId = localStorage.getItem(THREAD_ID_KEY) ?? '';
-    initThreadId(localStorage, threadId);
-  }, []);
-
-  // Synchronize on change
   useEffect(() => {
-    window.localStorage.setItem(THREAD_ID_KEY, threadId);
-  }, [threadId]);
+    setThreadId(threadIdParam || '');
+  }, [threadIdParam]);
+
+  const messages = useLoaderData();
 
   const health = 65;
 
@@ -123,7 +106,7 @@ export async function action({ request }: { request: Request }) {
   const threadId = formData.get('threadId') || '';
   const playerDecision = formData.get('decision') || '';
   await ZorkEngine.postUserDecision(threadId.toString(), playerDecision.toString());
-  return redirect(`/game?threadId=${threadId})`);
+  return redirect(`/game?threadId=${threadId}`);
 }
 
 // Function to render hearts based on health
