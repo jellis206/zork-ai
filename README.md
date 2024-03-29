@@ -35,6 +35,13 @@ Make sure to deploy the output of `npm run build`
 - `build/server`
 - `build/client`
 
+# Testing
+To test, run:
+
+```
+npx tsx app/scripts/try.ts
+```
+
 # Open_AI
 Open AI Assistants are a powerful tool that can be used to create chatbots, games, and more. Follow the steps below to get started.
 
