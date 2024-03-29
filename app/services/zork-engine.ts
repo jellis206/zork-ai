@@ -14,12 +14,6 @@ export default class ZorkEngine {
   }
 
   public async startNewGame(threadId: string, theme: string): Promise<NewGameMessage> {
-    // delete old thread if threadId is not an empty string
-    if (threadId) {
-      await this.zorkAI.deleteThread(threadId);
-    }
-    threadId = await this.zorkAI.startNewThread();
-    // set theme
     const message = {
       health: 100,
       items: [],

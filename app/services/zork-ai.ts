@@ -53,7 +53,7 @@ export class ZorkAI {
         assistant_id: this.assistant?.id ?? ASSISTANT_ID
       });
 
-      for (let attempts = 0; attempts < 5; attempts++) {
+      for (let attempts = 0; attempts < 10; attempts++) {
         // Check run status
         const runStatus = await this.openai.beta.threads.runs.retrieve(threadId, run.id);
         await new Promise((resolve) => setTimeout(resolve, 2000)); // Wait for 2 seconds
@@ -76,6 +76,9 @@ export class ZorkAI {
 
   public async getMessages(threadId: string): Promise<string[]> {
     const messagePage = await this.openai.beta.threads.messages.list(threadId);
-    return messagePage.data.map((message) => message.content.toString());
+    return messagePage.data.map((message) => {
+      console.log('CONTENT', message.content);
+      return message.content.toString();
+    });
   }
 }

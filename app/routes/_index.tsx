@@ -1,8 +1,6 @@
-import { Link } from 'react-router-dom';
 import '~/styles/main.css';
 import ZorkEngine from '~/services/zork-engine';
-import { THREAD_ID_KEY } from '~/core/constants';
-import { useEffect, useLayoutEffect, useState } from 'react';
+import { Form, redirect, useLoaderData } from '@remix-run/react';
 
 // Define types for card data
 interface CardData {
@@ -65,67 +63,49 @@ function CustomTheme() {
   );
 }
 
+export async function loader() {
+  const threadId = await new ZorkEngine().startNewThread();
+  return threadId;
+}
+
 export default function Index() {
-  const [threadId, setThreadId] = useState('');
-  const [zorkEngine] = useState(new ZorkEngine());
-
-  const initThreadId = async (threadId?: string) => {
-    if (!threadId) {
-      threadId = await zorkEngine.startNewThread();
-      localStorage.setItem(THREAD_ID_KEY, threadId);
-    }
-    setThreadId(threadId);
-  };
-
-  // Synchronize initially
-  useLayoutEffect(() => {
-    const localStorage = window.localStorage;
-    const threadId = localStorage.getItem(THREAD_ID_KEY) ?? '';
-    initThreadId(threadId);
-  });
-
-  // Synchronize on change
-  useEffect(() => {
-    window.localStorage.setItem(THREAD_ID_KEY, threadId);
-  }, [threadId]);
-
-  async (theme: string) => {
-    console.log(threadId, theme);
-    const { newThreadId, startMessage } = await zorkEngine.startNewGame(threadId, theme);
-    setThreadId(newThreadId);
-    return startMessage;
-  };
+  const threadId = useLoaderData<typeof loader>();
 
   return (
     <div className="main-menu">
       <Welcome />
       <div className="card-container">
         {cardData.map((card: CardData) => (
-          <div key={card.id} className="transition-effect">
-            <Link
-              to={
-                {
-                  pathname: `/game`,
-                  search: `?threadId=${threadId}`,
-                  state: { threadDescription: card.description } // Pass serializable data instead of a function
-                } as { pathname: string; state: { threadDescription: string } }
-              }
-            >
-              <img
-                className="card-img"
-                src={card.src}
-                alt="Play"
-                style={{ maxWidth: '100%', height: 'auto' }} // Adjust image size here
-              />
-              <div className="card-content">
-                <h2 className="card-title">{card.title}</h2>
-                <p className="card-description">{card.description}</p>
+          <Form key={card.id} method="post">
+            <input type="hidden" name="threadId" value={threadId} />
+            <input type="hidden" name="theme" value={card.description} />
+            <button>
+              <div className="transition-effect">
+                <img
+                  className="card-img"
+                  src={card.src}
+                  alt="Play"
+                  style={{ maxWidth: '100%', height: 'auto' }} // Adjust image size here
+                />
+                <div className="card-content">
+                  <h2 className="card-title">{card.title}</h2>
+                  <p className="card-description">{card.description}</p>
+                </div>
               </div>
-            </Link>
-          </div>
+            </button>
+          </Form>
         ))}
       </div>
       <CustomTheme />
     </div>
   );
+}
+
+export async function action({ request }: { request: Request }) {
+  const formData = await request.formData();
+  const threadId = (formData.get('threadId') || '').toString();
+  const theme = (formData.get('theme') || '').toString();
+  console.log('formData', formData);
+  const { newThreadId } = await new ZorkEngine().startNewGame(threadId, theme);
+  return redirect(`/game?threadId=${newThreadId}`);
 }

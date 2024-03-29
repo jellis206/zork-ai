@@ -3,15 +3,14 @@ import hearthalf from '~/assets/heart-half.png';
 import heartempty from '~/assets/heart-empty.png';
 import backpack from '~/assets/backpack.png';
 import ZorkEngine from '~/services/zork-engine';
-import { Form, redirect, useLoaderData, useSearchParams } from '@remix-run/react';
-import { useEffect, useState } from 'react';
+import { Form, redirect, useLoaderData } from '@remix-run/react';
 import { TypedResponse } from '@remix-run/node';
 
 export async function loader({
   request
 }: {
   request: Request;
-}): Promise<string[] | TypedResponse<never>> {
+}): Promise<{ threadId: string; messages: string[] } | TypedResponse<never>> {
   const zorkEngine = new ZorkEngine();
   const url = new URL(request.url);
   let threadId = url.searchParams.get('threadId') || '';
@@ -19,89 +18,19 @@ export async function loader({
     threadId = await zorkEngine.startNewThread();
     return redirect(`/game?threadId=${threadId}`);
   }
-  return zorkEngine.getThread(threadId);
+  const messages = await zorkEngine.getThread(threadId);
+  return { threadId, messages };
 }
 
 export default function Game() {
-  const [threadId, setThreadId] = useState('');
-  const [searchParams] = useSearchParams();
-  const threadIdParam = searchParams.get('threadId');
-
-  useEffect(() => {
-    setThreadId(threadIdParam || '');
-  }, [threadIdParam]);
-
-  const messages = useLoaderData();
-
-  const health = 65;
-
-  const messagesList =
-    Array.isArray(messages) && messages.length > 0
-      ? messages
-      : [
-          {
-            role: 'ZorkBot',
-            text: 'You are standing in an open field west of a white house, with a boarded front door. There is a small mailbox here.'
-          },
-          {
-            role: 'Player',
-            text: 'I want to open the mailbox.'
-          },
-          {
-            role: 'ZorkBot',
-            text: 'You are standing in an open field west of a white house, with a boarded front door. There is a small mailbox here.'
-          },
-          {
-            role: 'Player',
-            text: 'I want to open the mailbox.'
-          },
-          {
-            role: 'ZorkBot',
-            text: 'You are standing in an open field west of a white house, with a boarded front door. There is a small mailbox here.'
-          },
-          {
-            role: 'Player',
-            text: 'I want to open the mailbox.'
-          },
-          {
-            role: 'ZorkBot',
-            text: 'You are standing in an open field west of a white house, with a boarded front door. There is a small mailbox here.'
-          },
-          {
-            role: 'Player',
-            text: 'I want to open the mailbox.'
-          },
-          {
-            role: 'ZorkBot',
-            text: 'You are standing in an open field west of a white house, with a boarded front door. There is a small mailbox here.'
-          },
-          {
-            role: 'Player',
-            text: 'I want to open the mailbox.'
-          },
-          {
-            role: 'ZorkBot',
-            text: 'You are standing in an open field west of a white house, with a boarded front door. There is a small mailbox here.'
-          },
-          {
-            role: 'Player',
-            text: 'I want to open the mailbox.'
-          },
-          {
-            role: 'ZorkBot',
-            text: 'You are standing in an open field west of a white house, with a boarded front door. There is a small mailbox here.'
-          },
-          {
-            role: 'Player',
-            text: 'I want to open the mailbox.'
-          }
-        ];
+  const { threadId, messages } = useLoaderData<typeof loader>();
+  const health = 100;
 
   return (
     <div className="game-screen">
       <div className="command-terminal-container">
         <div className="command-messages">
-          {messagesList.map((message, index) => (
+          {messages.map((message, index) => (
             <div key={index} className="message">
               {message.role === 'ZorkBot' ? (
                 <span className="message-role">{message.role}: </span>
