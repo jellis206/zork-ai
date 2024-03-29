@@ -12,13 +12,14 @@ export async function loader({
 }: {
   request: Request;
 }): Promise<string[] | TypedResponse<never>> {
+  const zorkEngine = new ZorkEngine();
   const url = new URL(request.url);
   let threadId = url.searchParams.get('threadId') || '';
   if (!threadId) {
-    threadId = await ZorkEngine.startNewThread();
+    threadId = await zorkEngine.startNewThread();
     return redirect(`/game?threadId=${threadId}`);
   }
-  return ZorkEngine.getThread(threadId);
+  return zorkEngine.getThread(threadId);
 }
 
 export default function Game() {
@@ -153,7 +154,7 @@ export async function action({ request }: { request: Request }) {
   const formData = await request.formData();
   const threadId = formData.get('threadId') || '';
   const playerDecision = formData.get('decision') || '';
-  await ZorkEngine.postUserDecision(threadId.toString(), playerDecision.toString());
+  await new ZorkEngine().postUserDecision(threadId.toString(), playerDecision.toString());
   return redirect(`/game?threadId=${threadId}`);
 }
 

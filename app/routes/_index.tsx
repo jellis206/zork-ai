@@ -67,10 +67,11 @@ function CustomTheme() {
 
 export default function Index() {
   const [threadId, setThreadId] = useState('');
+  const [zorkEngine] = useState(new ZorkEngine());
 
   const initThreadId = async (threadId?: string) => {
     if (!threadId) {
-      threadId = await ZorkEngine.startNewThread();
+      threadId = await zorkEngine.startNewThread();
       localStorage.setItem(THREAD_ID_KEY, threadId);
     }
     setThreadId(threadId);
@@ -81,7 +82,7 @@ export default function Index() {
     const localStorage = window.localStorage;
     const threadId = localStorage.getItem(THREAD_ID_KEY) ?? '';
     initThreadId(threadId);
-  }, []);
+  });
 
   // Synchronize on change
   useEffect(() => {
@@ -90,7 +91,7 @@ export default function Index() {
 
   async (theme: string) => {
     console.log(threadId, theme);
-    const { newThreadId, startMessage } = await ZorkEngine.startNewGame(threadId, theme);
+    const { newThreadId, startMessage } = await zorkEngine.startNewGame(threadId, theme);
     setThreadId(newThreadId);
     return startMessage;
   };

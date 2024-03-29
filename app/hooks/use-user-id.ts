@@ -4,10 +4,11 @@ import ZorkEngine from '~/services/zork-engine';
 
 export default function useThreadId(value = '') {
   const [threadId, setThreadId] = useState(value);
+  const [zorkEngine] = useState(new ZorkEngine());
 
   const initThreadId = async (threadId?: string) => {
     if (!threadId) {
-      threadId = await ZorkEngine.startNewThread();
+      threadId = await zorkEngine.startNewThread();
       localStorage.setItem(THREAD_ID_KEY, threadId);
     }
     setThreadId(threadId);
@@ -18,7 +19,7 @@ export default function useThreadId(value = '') {
     const localStorage = window.localStorage;
     const threadId = localStorage.getItem(THREAD_ID_KEY) ?? '';
     initThreadId(threadId);
-  }, []);
+  });
 
   // Synchronize on change
   useEffect(() => {

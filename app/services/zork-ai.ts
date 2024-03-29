@@ -7,15 +7,8 @@ import * as dotenv from 'dotenv';
 export class ZorkAI {
   private openai: OpenAI;
   private assistant: Assistant | null = null;
-  private static _instance: ZorkAI;
-  public static get instance(): ZorkAI {
-    if (!ZorkAI._instance) {
-      ZorkAI._instance = new ZorkAI();
-    }
-    return ZorkAI._instance;
-  }
 
-  private constructor() {
+  constructor() {
     dotenv.config();
     const apiKey = process.env.OPEN_AI_KEY;
     if (!apiKey) {

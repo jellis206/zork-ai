@@ -8,15 +8,17 @@ export type NewGameMessage = {
 };
 
 export default class ZorkEngine {
-  private zorkAI = ZorkAI.instance;
-  constructor(private threadId: string) {}
+  private zorkAI: ZorkAI;
+  constructor() {
+    this.zorkAI = new ZorkAI();
+  }
 
-  public static async startNewGame(threadId: string, theme: string): Promise<NewGameMessage> {
+  public async startNewGame(threadId: string, theme: string): Promise<NewGameMessage> {
     // delete old thread if threadId is not an empty string
     if (threadId) {
-      await ZorkAI.instance.deleteThread(threadId);
+      await this.zorkAI.deleteThread(threadId);
     }
-    threadId = await ZorkAI.instance.startNewThread();
+    threadId = await this.zorkAI.startNewThread();
     // set theme
     const message = {
       health: 100,
@@ -24,25 +26,25 @@ export default class ZorkEngine {
       situation: theme ?? DEFAULT_THEME,
       player_decision: ''
     };
-    const startMessage = await ZorkAI.instance.sendMessage(threadId, message);
+    const startMessage = await this.zorkAI.sendMessage(threadId, message);
     return { newThreadId: threadId, startMessage };
   }
 
-  public static async postUserDecision(threadId: string, decision: string) {
+  public async postUserDecision(threadId: string, decision: string) {
     const message = {
       health: 100,
       items: [],
       situation: DEFAULT_THEME,
       player_decision: decision
     };
-    return await ZorkAI.instance.sendMessage(threadId, message);
+    return await this.zorkAI.sendMessage(threadId, message);
   }
 
-  public static async getThread(threadId: string) {
-    return await ZorkAI.instance.getMessages(threadId);
+  public async getThread(threadId: string) {
+    return await this.zorkAI.getMessages(threadId);
   }
 
-  public static async startNewThread(): Promise<string> {
-    return await ZorkAI.instance.startNewThread();
+  public async startNewThread(): Promise<string> {
+    return await this.zorkAI.startNewThread();
   }
 }
