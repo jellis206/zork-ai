@@ -14,6 +14,7 @@ body {
   width: '100%';
   font-family: 'system-ui, sans-serif';
   line-height: 1.8;
+  margin-left: 5rem;
 }
 
 .css-h93ljk-MuiTypography-root {
@@ -24,18 +25,25 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: center;
+  overflow: auto;
   margin: 0 2rem;
-  height: 100vh;
 }
 
 .card-container {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
+  display: flex;
+  flex-wrap: wrap;
   gap: 1rem;
+  margin-left: 5rem;
+  margin-right: 5rem;
+  margin-bottom: 2rem; /* Adjust margin bottom as needed */
 }
 
 .card-text {
   font-family: 'Courier New';
+}
+
+.card-button {
+  max-width: 300px;
 }
 
 .command-terminal-container {
@@ -63,6 +71,7 @@ body {
 .command-input {
   flex: 1;
   margin-right: 10px;
+  margin-left: 5rem;
   border: none;
   border-radius: 3px;
   background-color: transparent;

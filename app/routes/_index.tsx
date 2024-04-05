@@ -79,13 +79,13 @@ export default function Index() {
           <Form key={card.id} method="post">
             <input type="hidden" name="threadId" value={threadId} />
             <input type="hidden" name="theme" value={card.description} />
-            <button>
+            <button className="card-button">
               <div className="transition-effect">
                 <img
                   className="card-img"
                   src={card.src}
                   alt="Play"
-                  style={{ maxWidth: '100%', height: 'auto' }} // Adjust image size here
+                  style={{ maxWidth: '100%', height: '200px' }} // Adjust image size here
                 />
                 <div className="card-content">
                   <h2 className="card-title">{card.title}</h2>
