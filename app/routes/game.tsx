@@ -5,12 +5,13 @@ import backpack from '~/assets/backpack.png';
 import ZorkEngine from '~/services/zork-engine';
 import { Form, redirect, useLoaderData } from '@remix-run/react';
 import { TypedResponse } from '@remix-run/node';
+import { ZorkMessage } from '~/services/zork-ai';
 
 export async function loader({
   request
 }: {
   request: Request;
-}): Promise<{ threadId: string; messages: string[] } | TypedResponse<never>> {
+}): Promise<{ threadId: string; thread: ZorkMessage[] } | TypedResponse<never>> {
   const zorkEngine = new ZorkEngine();
   const url = new URL(request.url);
   let threadId = url.searchParams.get('threadId') || '';
@@ -18,26 +19,30 @@ export async function loader({
     threadId = await zorkEngine.startNewThread();
     return redirect(`/game?threadId=${threadId}`);
   }
-  const messages = await zorkEngine.getThread(threadId);
-  return { threadId, messages };
+  const thread = [];
+  const allMessages = await zorkEngine.getThread(threadId);
+  for (let i = allMessages.length - 1; i >= 0; i--) {
+    for (let j = allMessages[i].length - 1; j >= 0; j--) {
+      thread.push(allMessages[i][j]);
+    }
+  }
+  return { threadId, thread };
 }
 
 export default function Game() {
-  const { threadId, messages } = useLoaderData<typeof loader>();
+  const { threadId, thread } = useLoaderData<typeof loader>();
   const health = 100;
 
   return (
     <div className="game-screen">
       <div className="command-terminal-container">
         <div className="command-messages">
-          {messages.map((message, index) => (
+          {thread.map((message, index) => (
             <div key={index} className="message">
-              {message.role === 'ZorkBot' ? (
-                <span className="message-role">{message.role}: </span>
-              ) : (
-                <span>&gt; </span>
-              )}
-              <span className="message-text">{message.text}</span>
+              {message.reply ? <span className="message-role">ZorkBot: </span> : <span>&gt; </span>}
+              <span className="message-text">
+                {message?.reply ?? message?.player_decision ?? ''}
+              </span>
             </div>
           ))}
         </div>

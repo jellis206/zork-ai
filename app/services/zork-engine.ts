@@ -1,10 +1,10 @@
-import { ZorkAI } from './zork-ai';
+import { ZorkAI, ZorkMessage } from './zork-ai';
 
 const DEFAULT_THEME = 'zork';
 
 export type NewGameMessage = {
   newThreadId: string;
-  startMessage: string;
+  introduction: ZorkMessage[];
 };
 
 export default class ZorkEngine {
@@ -20,8 +20,8 @@ export default class ZorkEngine {
       situation: theme ?? DEFAULT_THEME,
       player_decision: ''
     };
-    const startMessage = await this.zorkAI.sendMessage(threadId, message);
-    return { newThreadId: threadId, startMessage };
+    const introduction = await this.zorkAI.sendMessage(threadId, message);
+    return { newThreadId: threadId, introduction };
   }
 
   public async postUserDecision(threadId: string, decision: string) {
