@@ -1,7 +1,7 @@
 import heart from '~/assets/heart.png';
 import hearthalf from '~/assets/heart-half.png';
 import heartempty from '~/assets/heart-empty.png';
-import backpack from '~/assets/backpack.png';
+import backpackImage from '~/assets/backpack.png';
 import ZorkEngine from '~/services/zork-engine';
 import { Form, redirect, useLoaderData } from '@remix-run/react';
 import { TypedResponse } from '@remix-run/node';
@@ -11,7 +11,10 @@ export async function loader({
   request
 }: {
   request: Request;
-}): Promise<{ threadId: string; thread: ZorkMessage[] } | TypedResponse<never>> {
+}): Promise<
+  | { threadId: string; thread: ZorkMessage[]; health: number; items: string[] }
+  | TypedResponse<never>
+> {
   const zorkEngine = new ZorkEngine();
   const url = new URL(request.url);
   let threadId = url.searchParams.get('threadId') || '';
@@ -19,19 +22,29 @@ export async function loader({
     threadId = await zorkEngine.startNewThread();
     return redirect(`/game?threadId=${threadId}`);
   }
+
   const thread = [];
   const allMessages = await zorkEngine.getThread(threadId);
   for (let i = allMessages.length - 1; i >= 0; i--) {
     for (let j = allMessages[i].length - 1; j >= 0; j--) {
-      thread.push(allMessages[i][j]);
+      const message = allMessages[i][j];
+      thread.push(message);
+      console.log(message);
     }
   }
-  return { threadId, thread };
+
+  const firstHealth = thread.find((message) => message?.health)?.health || 100;
+  const health = thread.reduce(
+    (totalHealth, message) => totalHealth - (message?.damage || 0),
+    firstHealth
+  );
+  const items = thread[thread.length - 1].items;
+
+  return { threadId, thread, health, items };
 }
 
 export default function Game() {
-  const { threadId, thread } = useLoaderData<typeof loader>();
-  const health = 100;
+  const { thread, health, items, threadId } = useLoaderData<typeof loader>();
 
   return (
     <div className="game-screen">
@@ -50,6 +63,8 @@ export default function Game() {
           <div className="command-prompt">&gt;</div>
           <Form method="post">
             <input type="hidden" name="threadId" value={threadId} />
+            <input type="hidden" name="health" value={health} />
+            <input type="hidden" name="items" value={items} />
             <input
               type="text"
               name="decision"
@@ -66,18 +81,14 @@ export default function Game() {
       <div className="side-panel">
         <div className="health-bar">{renderHearts(health)}</div>
         <div className="backpack-header">
-          <img src={backpack} alt="backpack"></img>
+          <img src={backpackImage} alt="backpack"></img>
         </div>
         <div className="backpack-items">
-          <div className="backpack-item">
-            <p>Sword</p>
-          </div>
-          <div className="backpack-item">
-            <p>Shield</p>
-          </div>
-          <div className="backpack-item">
-            <p>Illegal Drugs</p>
-          </div>
+          {items.map((item, index) => (
+            <div key={index} className="backpack-item">
+              <p>{item}</p>
+            </div>
+          ))}{' '}
         </div>
       </div>
     </div>
@@ -88,7 +99,14 @@ export async function action({ request }: { request: Request }) {
   const formData = await request.formData();
   const threadId = formData.get('threadId') || '';
   const playerDecision = formData.get('decision') || '';
-  await new ZorkEngine().postUserDecision(threadId.toString(), playerDecision.toString());
+  const health = formData.get('health') || '';
+  const items = formData.get('items') || '';
+  await new ZorkEngine().postUserDecision(
+    threadId.toString(),
+    playerDecision.toString(),
+    Number(health.toString()),
+    items.toString().split(',')
+  );
   return redirect(`/game?threadId=${threadId}`);
 }
 

@@ -24,10 +24,15 @@ export default class ZorkEngine {
     return { newThreadId: threadId, introduction };
   }
 
-  public async postUserDecision(threadId: string, decision: string) {
+  public async postUserDecision(
+    threadId: string,
+    decision: string,
+    health: number,
+    items: string[]
+  ) {
     const message = {
-      health: 100,
-      items: [],
+      health,
+      items,
       situation: DEFAULT_THEME,
       player_decision: decision
     };
