@@ -12,7 +12,7 @@ export async function loader({
 }: {
   request: Request;
 }): Promise<
-  | { threadId: string; thread: ZorkMessage[]; health: number; items: string[] }
+  | { threadId: string; thread: ZorkMessage[]; health: number; items: string[]; situation: string }
   | TypedResponse<never>
 > {
   const zorkEngine = new ZorkEngine();
@@ -29,7 +29,6 @@ export async function loader({
     for (let j = allMessages[i].length - 1; j >= 0; j--) {
       const message = allMessages[i][j];
       thread.push(message);
-      console.log(message);
     }
   }
 
@@ -39,25 +38,35 @@ export async function loader({
     firstHealth
   );
   const items = thread[thread.length - 1].items;
+  const prefix = 'start game: ';
+  const situation =
+    thread.find((message) => message?.situation)?.situation?.slice(prefix.length) || 'zork';
 
-  return { threadId, thread, health, items };
+  return { threadId, thread, health, items, situation };
 }
 
 export default function Game() {
-  const { thread, health, items, threadId } = useLoaderData<typeof loader>();
+  const { threadId, thread, health, items, situation } = useLoaderData<typeof loader>();
 
   return (
     <div className="game-screen">
       <div className="command-terminal-container">
         <div className="command-messages">
-          {thread.map((message, index) => (
-            <div key={index} className="message">
-              {message.reply ? <span className="message-role">ZorkBot: </span> : <span>&gt; </span>}
-              <span className="message-text">
-                {message?.reply ?? message?.player_decision ?? ''}
-              </span>
-            </div>
-          ))}
+          {thread.map(
+            (message, index) =>
+              (message.reply || message.player_decision) && (
+                <div key={index} className="message">
+                  {message.reply ? (
+                    <span className="message-role">ZorkBot: </span>
+                  ) : (
+                    <span>&gt; </span>
+                  )}
+                  <span className="message-text">
+                    {message?.reply ?? message?.player_decision ?? ''}
+                  </span>
+                </div>
+              )
+          )}
         </div>
         <div className="command-input-container">
           <div className="command-prompt">&gt;</div>
@@ -65,6 +74,7 @@ export default function Game() {
             <input type="hidden" name="threadId" value={threadId} />
             <input type="hidden" name="health" value={health} />
             <input type="hidden" name="items" value={items} />
+            <input type="hidden" name="situation" value={situation} />
             <input
               type="text"
               name="decision"
@@ -101,11 +111,13 @@ export async function action({ request }: { request: Request }) {
   const playerDecision = formData.get('decision') || '';
   const health = formData.get('health') || '';
   const items = formData.get('items') || '';
+  const situation = formData.get('situation') || 'zork';
   await new ZorkEngine().postUserDecision(
     threadId.toString(),
     playerDecision.toString(),
     Number(health.toString()),
-    items.toString().split(',')
+    items.toString().split(','),
+    situation.toString()
   );
   return redirect(`/game?threadId=${threadId}`);
 }

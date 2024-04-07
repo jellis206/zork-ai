@@ -17,7 +17,7 @@ export default class ZorkEngine {
     const message = {
       health: 100,
       items: [],
-      situation: theme ?? DEFAULT_THEME,
+      situation: 'start game: ' + (theme ?? DEFAULT_THEME),
       player_decision: ''
     };
     const introduction = await this.zorkAI.sendMessage(threadId, message);
@@ -26,21 +26,24 @@ export default class ZorkEngine {
 
   public async postUserDecision(
     threadId: string,
-    decision: string,
+    player_decision: string,
     health: number,
-    items: string[]
-  ) {
+    items: string[],
+    situation: string
+  ): Promise<ZorkMessage[]> {
     const message = {
+      player_decision,
       health,
       items,
-      situation: DEFAULT_THEME,
-      player_decision: decision
+      situation
     };
     return await this.zorkAI.sendMessage(threadId, message);
   }
 
-  public async getThread(threadId: string) {
-    return await this.zorkAI.getMessages(threadId);
+  public async getThread(threadId: string): Promise<ZorkMessage[][]> {
+    const thread = await this.zorkAI.getMessages(threadId);
+    console.log(thread);
+    return thread;
   }
 
   public async startNewThread(): Promise<string> {
