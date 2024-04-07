@@ -35,7 +35,29 @@ Make sure to deploy the output of `npm run build`
 - `build/server`
 - `build/client`
 
-## ZORK_AI Config File
+# Testing
+To test, run:
+
+```
+npx tsx app/scripts/try.ts
+```
+
+# Open_AI
+Open AI Assistants are a powerful tool that can be used to create chatbots, games, and more. Follow the steps below to get started.
+
+## OPEN AI API KEY
+You will need an OPEN AI API key to run this project. You can get one [here](https://platform.openai.com/signup). After you get your API key, you will need to create a `.env` file in the root of the project and add the following line to it:
+
+```
+OPENAI_API_KEY=<your_api_key>
+```
+
+Replace the <your_api_key> from the above line with your actual API key. Make sure to remove the angle brackets.
+
+## ZORK_AI ASSISTANT
+Make an assistant in OpenAI. You can do this by going to the OpenAI website and creating a new assistant. You will need to train the assistant with the Zork AI config prompt. You can find the Zork AI config prompt below.
+
+### ZORK_AI Config
 This is what we used to prompt the OpenAI assistant.
 
 ```

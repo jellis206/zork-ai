@@ -1,40 +1,52 @@
-import { ZorkAI } from './zork-ai';
+import { ZorkAI, ZorkMessage } from './zork-ai';
 
 const DEFAULT_THEME = 'zork';
 
 export type NewGameMessage = {
   newThreadId: string;
-  startMessage: string;
+  introduction: ZorkMessage[];
 };
 
 export default class ZorkEngine {
-  private zorkAI = ZorkAI.instance;
-  constructor(private threadId: string) {}
-
-  public static async startNewGame(threadId: string, theme: string): Promise<NewGameMessage> {
-    // delete old thread if threadId is not an empty string
-    if (threadId) {
-      await ZorkAI.instance.deleteThread(threadId);
-    }
-    threadId = await ZorkAI.instance.startNewThread();
-    // set theme
-    const message = {
-      health: 100,
-      items: [],
-      situation: theme ?? DEFAULT_THEME,
-      player_decision: ''
-    };
-    const startMessage = await ZorkAI.instance.sendMessage(threadId, message);
-    return { newThreadId: threadId, startMessage };
+  private zorkAI: ZorkAI;
+  constructor() {
+    this.zorkAI = new ZorkAI();
   }
 
-  public static async postUserDecision(threadId: string, decision: string) {
+  public async startNewGame(threadId: string, theme: string): Promise<NewGameMessage> {
     const message = {
       health: 100,
       items: [],
-      situation: DEFAULT_THEME,
-      player_decision: decision
+      situation: 'start game: ' + (theme ?? DEFAULT_THEME),
+      player_decision: ''
     };
-    return await ZorkAI.instance.sendMessage(threadId, message);
+    const introduction = await this.zorkAI.sendMessage(threadId, message);
+    return { newThreadId: threadId, introduction };
+  }
+
+  public async postUserDecision(
+    threadId: string,
+    player_decision: string,
+    health: number,
+    items: string[],
+    situation: string
+  ): Promise<ZorkMessage[]> {
+    const message = {
+      player_decision,
+      health,
+      items,
+      situation
+    };
+    return await this.zorkAI.sendMessage(threadId, message);
+  }
+
+  public async getThread(threadId: string): Promise<ZorkMessage[][]> {
+    const thread = await this.zorkAI.getMessages(threadId);
+    console.log(thread);
+    return thread;
+  }
+
+  public async startNewThread(): Promise<string> {
+    return await this.zorkAI.startNewThread();
   }
 }

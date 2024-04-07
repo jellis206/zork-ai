@@ -1,118 +1,80 @@
-// import { useState } from 'react';
-// import { TextField, Button, Container, Typography, Input } from '@mui/material';
 import heart from '~/assets/heart.png';
 import hearthalf from '~/assets/heart-half.png';
 import heartempty from '~/assets/heart-empty.png';
-import backpack from '~/assets/backpack.png';
+import backpackImage from '~/assets/backpack.png';
 import ZorkEngine from '~/services/zork-engine';
-import useThreadId from '~/hooks/use-user-id';
-import { Form, redirect } from '@remix-run/react';
+import { Form, redirect, useLoaderData } from '@remix-run/react';
+import { TypedResponse } from '@remix-run/node';
+import { ZorkMessage } from '~/services/zork-ai';
+
+export async function loader({
+  request
+}: {
+  request: Request;
+}): Promise<
+  | { threadId: string; thread: ZorkMessage[]; health: number; items: string[]; situation: string }
+  | TypedResponse<never>
+> {
+  const zorkEngine = new ZorkEngine();
+  const url = new URL(request.url);
+  let threadId = url.searchParams.get('threadId') || '';
+  if (!threadId) {
+    threadId = await zorkEngine.startNewThread();
+    return redirect(`/game?threadId=${threadId}`);
+  }
+
+  const thread = [];
+  const allMessages = await zorkEngine.getThread(threadId);
+  for (let i = allMessages.length - 1; i >= 0; i--) {
+    for (let j = allMessages[i].length - 1; j >= 0; j--) {
+      const message = allMessages[i][j];
+      thread.push(message);
+    }
+  }
+
+  const firstHealth = thread.find((message) => message?.health)?.health || 100;
+  const health = thread.reduce(
+    (totalHealth, message) => totalHealth - (message?.damage || 0),
+    firstHealth
+  );
+  const items = thread[thread.length - 1].items;
+  const prefix = 'start game: ';
+  const situation =
+    thread.find((message) => message?.situation)?.situation?.slice(prefix.length) || 'zork';
+
+  return { threadId, thread, health, items, situation };
+}
 
 export default function Game() {
-  const [threadId] = useThreadId();
-  // const [inputValue, setInputValue] = useState<string>('');
-  // const [outputValue, setOutputValue] = useState<string>('');
-
-  // const handleKeyPress = (event) => {
-  //   if (event.key === 'Enter') {
-  //     // Call your function here
-  //     handleEnterPress();
-  //   }
-  // };
-
-  // const handleEnterPress = () => {
-  //   console.log('Enter key pressed!');
-  //   // Add your logic here
-  // };
-
-  // const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-  //   setInputValue(event.target.value);
-  // };
-
-  const health = 65;
-
-  const messagesList = [
-    {
-      role: 'ZorkBot',
-      text: 'You are standing in an open field west of a white house, with a boarded front door. There is a small mailbox here.'
-    },
-    {
-      role: 'Player',
-      text: 'I want to open the mailbox.'
-    },
-    {
-      role: 'ZorkBot',
-      text: 'Opening the mailbox reveals a leaflet.'
-    },
-    {
-      role: 'Player',
-      text: 'I want to read the leaflet.'
-    },
-    {
-      role: 'ZorkBot',
-      text: 'Welcome to Zork! You are about to embark on a journey into the world of Zork. Your mission is to find the treasures hidden throughout the land. Be warned, the land is filled with danger and you will need to use your wits to survive.'
-    },
-    {
-      role: 'ZorkBot',
-      text: 'You are standing in an open field west of a white house, with a boarded front door. There is a small mailbox here.'
-    },
-    {
-      role: 'Player',
-      text: 'I want to open the mailbox.'
-    },
-    {
-      role: 'ZorkBot',
-      text: 'Opening the mailbox reveals a leaflet.'
-    },
-    {
-      role: 'Player',
-      text: 'I want to read the leaflet.'
-    },
-    {
-      role: 'ZorkBot',
-      text: 'Welcome to Zork! You are about to embark on a journey into the world of Zork. Your mission is to find the treasures hidden throughout the land. Be warned, the land is filled with danger and you will need to use your wits to survive.'
-    },
-    {
-      role: 'ZorkBot',
-      text: 'You are standing in an open field west of a white house, with a boarded front door. There is a small mailbox here.'
-    },
-    {
-      role: 'Player',
-      text: 'I want to open the mailbox.'
-    },
-    {
-      role: 'ZorkBot',
-      text: 'Opening the mailbox reveals a leaflet.'
-    },
-    {
-      role: 'Player',
-      text: 'I want to read the leaflet.'
-    },
-    {
-      role: 'ZorkBot',
-      text: 'Welcome to Zork! You are about to embark on a journey into the world of Zork. Your mission is to find the treasures hidden throughout the land. Be warned, the land is filled with danger and you will need to use your wits to survive.'
-    }
-  ];
+  const { threadId, thread, health, items, situation } = useLoaderData<typeof loader>();
 
   return (
     <div className="game-screen">
       <div className="command-terminal-container">
         <div className="command-messages">
-          {messagesList.map((message, index) => (
-            <div key={index} className="message">
-              {message.role === 'ZorkBot' ? (
-                <span className="message-role">{message.role}: </span>
-              ) : (
-                <span>&gt; </span>
-              )}
-              <span className="message-text">{message.text}</span>
-            </div>
-          ))}
+          {thread.map(
+            (message, index) =>
+              (message.reply || message.player_decision) && (
+                <div key={index} className="message">
+                  {message.reply ? (
+                    <span className="message-role">ZorkBot: </span>
+                  ) : (
+                    <span>&gt; </span>
+                  )}
+                  <span className="message-text">
+                    {message?.reply ?? message?.player_decision ?? ''}
+                  </span>
+                </div>
+              )
+          )}
         </div>
         <div className="command-input-container">
           <div className="command-prompt">&gt;</div>
           <Form method="post">
             <input type="hidden" name="threadId" value={threadId} />
+            <input type="hidden" name="health" value={health} />
+            <input type="hidden" name="items" value={items} />
+            <input type="hidden" name="situation" value={situation} />
             <input
               type="text"
               name="decision"
@@ -121,6 +83,7 @@ export default function Game() {
               className="command-input"
               // onKeyPress={handleKeyPress}
             />
+            <button>submit</button>
           </Form>
         </div>
       </div>
@@ -128,18 +91,14 @@ export default function Game() {
       <div className="side-panel">
         <div className="health-bar">{renderHearts(health)}</div>
         <div className="backpack-header">
-          <img src={backpack} alt="backpack"></img>
+          <img src={backpackImage} alt="backpack"></img>
         </div>
         <div className="backpack-items">
-          <div className="backpack-item">
-            <p>Sword</p>
-          </div>
-          <div className="backpack-item">
-            <p>Shield</p>
-          </div>
-          <div className="backpack-item">
-            <p>Illegal Drugs</p>
-          </div>
+          {items.map((item, index) => (
+            <div key={index} className="backpack-item">
+              <p>{item}</p>
+            </div>
+          ))}{' '}
         </div>
       </div>
     </div>
@@ -150,12 +109,17 @@ export async function action({ request }: { request: Request }) {
   const formData = await request.formData();
   const threadId = formData.get('threadId') || '';
   const playerDecision = formData.get('decision') || '';
-  const zorkResponse = await ZorkEngine.postUserDecision(
+  const health = formData.get('health') || '';
+  const items = formData.get('items') || '';
+  const situation = formData.get('situation') || 'zork';
+  await new ZorkEngine().postUserDecision(
     threadId.toString(),
-    playerDecision.toString()
+    playerDecision.toString(),
+    Number(health.toString()),
+    items.toString().split(','),
+    situation.toString()
   );
-  console.log(zorkResponse);
-  return redirect('/game');
+  return redirect(`/game?threadId=${threadId}`);
 }
 
 // Function to render hearts based on health

@@ -1,10 +1,8 @@
-// npm run dev
-
-import * as dotenv from 'dotenv';
+import dotenv from 'dotenv';
 import { OpenAI } from 'openai';
 
 // Load environment variables from .env file
-dotenv.config({ path: '../.env' }); // Adjust the path as needed
+dotenv.config(); // Adjust the path as needed
 
 // Get API key from environment variable
 const OPEN_AI_KEY = process.env.OPEN_AI_KEY;
@@ -13,7 +11,7 @@ if (!OPEN_AI_KEY) {
 }
 
 const clientOptions = {
-  apiKey: OPEN_AI_KEY,
+  apiKey: OPEN_AI_KEY
 };
 
 const openai = new OpenAI(clientOptions);
@@ -29,13 +27,13 @@ const content = JSON.stringify({
   health: 100,
   situation: 'Player is standing in front of a large white house. There is a mailbox there.',
   items: [],
-  player_decision: 'I want to open the mailbox.',
+  player_decision: 'I want to open the mailbox.'
 });
 
 // Add a message to the thread
 await openai.beta.threads.messages.create(thread.id, {
   role: 'user',
-  content,
+  content
 });
 
 // Create a run
