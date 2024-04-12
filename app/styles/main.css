@@ -70,14 +70,16 @@ body {
 
 .command-input {
   flex: 1;
+  width: 100%;
   margin-right: 10px;
-  margin-left: 5rem;
+  margin-left: 0.5rem;
   border: none;
   border-radius: 3px;
   background-color: transparent;
   color: #fff;
   font-family: 'VT323', monospace;
   font-size: 1.2rem;
+  white-space: pre-wrap;
 }
 
 .command-input:focus,
@@ -95,6 +97,7 @@ body {
 
 .command-input-container {
   display: flex;
+  width: 100%;
 }
 
 .command-input::before {
@@ -132,6 +135,10 @@ typography {
 .container {
   max-width: 600px;
   padding: 0 20px;
+}
+
+form {
+  width: 100%;
 }
 
 h1 {

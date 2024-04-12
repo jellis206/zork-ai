@@ -83,7 +83,7 @@ export default function Game() {
               className="command-input"
               // onKeyPress={handleKeyPress}
             />
-            <button>submit</button>
+            <button hidden>submit</button>
           </Form>
         </div>
       </div>
