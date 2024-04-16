@@ -42,7 +42,7 @@ To test, run:
 npx tsx app/scripts/try.ts
 ```
 
-# Open_AI
+# Open AI
 Open AI Assistants are a powerful tool that can be used to create chatbots, games, and more. Follow the steps below to get started.
 
 ## OPEN AI API KEY
@@ -54,10 +54,10 @@ OPENAI_API_KEY=<your_api_key>
 
 Replace the <your_api_key> from the above line with your actual API key. Make sure to remove the angle brackets.
 
-## ZORK_AI ASSISTANT
+## ZORK AI ASSISTANT
 Make an assistant in OpenAI. You can do this by going to the OpenAI website and creating a new assistant. You will need to train the assistant with the Zork AI config prompt. You can find the Zork AI config prompt below.
 
-### ZORK_AI Config
+### ZORK AI Config
 This is what we used to prompt the OpenAI assistant.
 
 ```
