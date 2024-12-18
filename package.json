@@ -5,7 +5,8 @@
   "scripts": {
     "start:frontend": "nx serve zork-ai",
     "start:backend": "nx serve zork-engine",
-    "start:all": "nx run-many --target=serve --projects=zork-ai,zork-engine --parallel=true"
+    "start:all": "nx run-many --target=serve --projects=zork-ai,zork-engine --parallel=true",
+    "prepare": "husky"
   },
   "private": true,
   "dependencies": {

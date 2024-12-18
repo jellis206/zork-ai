@@ -7200,7 +7200,7 @@ snapshots:
       typescript: 5.6.3
       webpack: 5.96.1(@swc/core@1.5.29(@swc/helpers@0.5.15))(esbuild@0.24.0)
       webpack-dev-middleware: 7.4.2(webpack@5.96.1(@swc/core@1.5.29(@swc/helpers@0.5.15))(esbuild@0.24.0))
-      webpack-dev-server: 5.1.0(webpack@5.88.0(@swc/core@1.5.29(@swc/helpers@0.5.15))(esbuild@0.19.12))
+      webpack-dev-server: 5.1.0(webpack@5.97.1(@swc/core@1.5.29(@swc/helpers@0.5.15))(esbuild@0.19.12))
       webpack-merge: 6.0.1
       webpack-subresource-integrity: 5.1.0(webpack@5.96.1(@swc/core@1.5.29(@swc/helpers@0.5.15))(esbuild@0.24.0))
     optionalDependencies:
@@ -7233,7 +7233,7 @@ snapshots:
       '@angular-devkit/architect': 0.1900.5(chokidar@4.0.2)
       rxjs: 7.8.1
       webpack: 5.96.1(@swc/core@1.5.29(@swc/helpers@0.5.15))(esbuild@0.24.0)
-      webpack-dev-server: 5.1.0(webpack@5.88.0(@swc/core@1.5.29(@swc/helpers@0.5.15))(esbuild@0.19.12))
+      webpack-dev-server: 5.1.0(webpack@5.97.1(@swc/core@1.5.29(@swc/helpers@0.5.15))(esbuild@0.19.12))
     transitivePeerDependencies:
       - chokidar
 
@@ -14871,17 +14871,6 @@ snapshots:
 
   webidl-conversions@7.0.0: {}
 
-  webpack-dev-middleware@7.4.2(webpack@5.88.0(@swc/core@1.5.29(@swc/helpers@0.5.15))(esbuild@0.19.12)):
-    dependencies:
-      colorette: 2.0.20
-      memfs: 4.15.0
-      mime-types: 2.1.35
-      on-finished: 2.4.1
-      range-parser: 1.2.1
-      schema-utils: 4.3.0
-    optionalDependencies:
-      webpack: 5.88.0(@swc/core@1.5.29(@swc/helpers@0.5.15))(esbuild@0.19.12)
-
   webpack-dev-middleware@7.4.2(webpack@5.96.1(@swc/core@1.5.29(@swc/helpers@0.5.15))(esbuild@0.24.0)):
     dependencies:
       colorette: 2.0.20
@@ -14904,7 +14893,7 @@ snapshots:
     optionalDependencies:
       webpack: 5.97.1(@swc/core@1.5.29(@swc/helpers@0.5.15))(esbuild@0.19.12)
 
-  webpack-dev-server@5.1.0(webpack@5.88.0(@swc/core@1.5.29(@swc/helpers@0.5.15))(esbuild@0.19.12)):
+  webpack-dev-server@5.1.0(webpack@5.97.1(@swc/core@1.5.29(@swc/helpers@0.5.15))(esbuild@0.19.12)):
     dependencies:
       '@types/bonjour': 3.5.13
       '@types/connect-history-api-fallback': 1.5.4
@@ -14932,10 +14921,10 @@ snapshots:
       serve-index: 1.9.1
       sockjs: 0.3.24
       spdy: 4.0.2
-      webpack-dev-middleware: 7.4.2(webpack@5.88.0(@swc/core@1.5.29(@swc/helpers@0.5.15))(esbuild@0.19.12))
+      webpack-dev-middleware: 7.4.2(webpack@5.97.1(@swc/core@1.5.29(@swc/helpers@0.5.15))(esbuild@0.19.12))
       ws: 8.18.0
     optionalDependencies:
-      webpack: 5.88.0(@swc/core@1.5.29(@swc/helpers@0.5.15))(esbuild@0.19.12)
+      webpack: 5.97.1(@swc/core@1.5.29(@swc/helpers@0.5.15))(esbuild@0.19.12)
     transitivePeerDependencies:
       - bufferutil
       - debug
