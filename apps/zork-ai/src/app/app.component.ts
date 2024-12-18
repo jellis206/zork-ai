@@ -1,14 +1,14 @@
 import { Component } from '@angular/core';
-import { RouterModule } from '@angular/router';
-import { NxWelcomeComponent } from './nx-welcome.component';
+import { RouterOutlet } from '@angular/router';
 
 @Component({
-  imports: [NxWelcomeComponent, RouterModule],
   selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrl: './app.component.scss',
   standalone: true,
+  imports: [RouterOutlet],
+  template: `
+    <div class="min-h-screen bg-gray-900">
+      <router-outlet></router-outlet>
+    </div>
+  `
 })
-export class AppComponent {
-  title = 'zork-ai';
-}
+export class AppComponent {}

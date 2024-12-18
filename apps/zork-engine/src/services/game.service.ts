@@ -123,6 +123,28 @@ export class GameService {
     }
   }
 
+  async getGameHistory(threadId: string): Promise<ZorkMessage[]> {
+    try {
+      if (!threadId) {
+        throw new AppError('Thread ID is required', 400, 'INVALID_THREAD_ID');
+      }
+
+      // Get messages from OpenAI thread
+      const messages = await this.openAIService.getThreadMessages(threadId);
+
+      if (!messages) {
+        throw new AppError('Failed to retrieve game history', 404, 'HISTORY_NOT_FOUND');
+      }
+
+      return messages.reverse();
+    } catch (error) {
+      if (error instanceof AppError) {
+        throw error;
+      }
+      throw new AppError('Failed to retrieve game history', 500, 'HISTORY_RETRIEVAL_FAILED');
+    }
+  }
+
   // Optional: Add method to retrieve partial game history
   /* async getRecentMessages(threadId: string, limit = 10): Promise<ZorkMessage[]> {
     try {

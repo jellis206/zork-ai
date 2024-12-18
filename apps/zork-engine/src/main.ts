@@ -61,6 +61,15 @@ const server = Bun.serve({
         return Response.json(response, { headers: corsHeaders });
       }
 
+      if (url.pathname.startsWith('/api/game/history/') && req.method === 'GET') {
+        const threadId = url.pathname.split('/').pop();
+        if (!threadId) {
+          throw new AppError('Thread ID is required', 400, 'BAD_REQUEST');
+        }
+        const messages = await gameService.getGameHistory(threadId);
+        return Response.json(messages, { headers: corsHeaders });
+      }
+
       // Handle 404
       throw new AppError('Endpoint not found', 404, 'NOT_FOUND');
     } catch (error) {

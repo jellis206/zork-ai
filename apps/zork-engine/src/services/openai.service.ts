@@ -1,5 +1,5 @@
 import { OpenAI } from 'openai';
-import { ZorkMessage } from '@zork-ai/core';
+import { ASSISTANT_ID, ZorkMessage } from '@zork-ai/core';
 import { AppError } from '../errors/app_error';
 
 export class OpenAIService {
@@ -7,16 +7,58 @@ export class OpenAIService {
   private assistantId: string;
 
   constructor() {
-    const apiKey = process.env.OPEN_AI_KEY;
+    const apiKey = process.env.OPENAI_API_KEY;
     if (!apiKey) {
       throw new AppError('OpenAI API key not found', 500, 'MISSING_API_KEY');
     }
 
     this.openai = new OpenAI({ apiKey });
-    this.assistantId = process.env.ASSISTANT_ID;
+    this.assistantId = ASSISTANT_ID;
 
     if (!this.assistantId) {
       throw new AppError('Assistant ID not found', 500, 'MISSING_ASSISTANT_ID');
+    }
+  }
+
+  async getThreadMessages(threadId: string, limit?: number): Promise<ZorkMessage[]> {
+    try {
+      const messages = await this.openai.beta.threads.messages.list(threadId, {
+        limit: limit || 100,
+        order: 'desc'
+      });
+
+      const assistantMessages = messages.data.filter((msg) => msg.role === 'assistant');
+
+      const zorkMessages = assistantMessages.map((message) => {
+        try {
+          // Find the first text content block
+          const textContent = message.content.find((content) => content.type === 'text');
+
+          if (!textContent || textContent.type !== 'text') {
+            throw new Error('No text content found in message');
+          }
+
+          return JSON.parse(textContent.text.value);
+        } catch (error) {
+          console.error('Error parsing message:', error);
+          return {
+            content: 'Error reading message content',
+            damage: 0,
+            items: [],
+            situation: 'unknown'
+          };
+        }
+      });
+
+      return zorkMessages;
+    } catch (error) {
+      console.error('Error fetching thread messages:', error);
+      if (error instanceof AppError) throw error;
+      throw new AppError(
+        'Failed to retrieve thread messages',
+        500,
+        'OPENAI_MESSAGE_RETRIEVAL_FAILED'
+      );
     }
   }
 

@@ -26,3 +26,11 @@ export type NewGameResponse = {
   threadId: string;
   introduction: ZorkMessage[];
 };
+
+export type CardData = {
+  id: number;
+  src: string;
+  title: string;
+  description: string;
+  theme: string;
+};
