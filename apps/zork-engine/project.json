@@ -1,0 +1,62 @@
+{
+  "name": "zork-engine",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/zork-engine/src",
+  "projectType": "application",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@nx/esbuild:esbuild",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "platform": "node",
+        "outputPath": "dist/apps/zork-engine",
+        "format": ["cjs"],
+        "bundle": false,
+        "main": "apps/zork-engine/src/main.ts",
+        "tsConfig": "apps/zork-engine/tsconfig.app.json",
+        "assets": ["apps/zork-engine/src/assets"],
+        "generatePackageJson": true,
+        "esbuildOptions": {
+          "sourcemap": true,
+          "outExtension": {
+            ".js": ".js"
+          }
+        }
+      },
+      "configurations": {
+        "development": {},
+        "production": {
+          "esbuildOptions": {
+            "sourcemap": false,
+            "outExtension": {
+              ".js": ".js"
+            }
+          }
+        }
+      }
+    },
+    "serve": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "bun run apps/zork-engine/src/main.ts"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "zork-engine:build:development"
+        },
+        "production": {
+          "buildTarget": "zork-engine:build:production"
+        }
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "apps/zork-engine/jest.config.ts"
+      }
+    }
+  }
+}
