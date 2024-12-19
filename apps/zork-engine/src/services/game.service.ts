@@ -18,7 +18,7 @@ export class GameService {
         health: 100,
         items: [],
         situation: `start game: ${theme}`,
-        player_decision: ''
+        decision: ''
       };
 
       const introduction = await this.openAIService.sendMessage(threadId, initialState);
@@ -43,7 +43,7 @@ export class GameService {
       this.validateGameState(gameState);
 
       const message = {
-        player_decision: decision,
+        decision,
         health: gameState.health,
         items: gameState.items,
         situation: gameState.situation
@@ -57,7 +57,10 @@ export class GameService {
 
       // Process any damage from the response
       const totalDamage = response.reduce((sum, msg) => sum + (msg.damage || 0), 0);
-      if (totalDamage > 0 && gameState.health - totalDamage <= 0) {
+      if (
+        (totalDamage > 0 && gameState.health - totalDamage <= 0) ||
+        response.at(-1)?.health === 0
+      ) {
         await this.handleGameOver(gameState.threadId);
       }
 
@@ -67,6 +70,43 @@ export class GameService {
         throw error;
       }
       throw new AppError('Failed to process player decision', 500, 'DECISION_PROCESSING_FAILED');
+    }
+  }
+
+  async recoverState(gameState: GameState, decision: string): Promise<ZorkMessage[]> {
+    try {
+      // Validate game state
+      this.validateGameState(gameState);
+
+      const message = {
+        decision,
+        health: gameState.health,
+        items: gameState.items,
+        situation: gameState.situation,
+        stateRecovery: this.openAIService.recoveryKey
+      };
+
+      const response = await this.openAIService.sendMessage(gameState.threadId, message);
+
+      if (!response || response.length === 0) {
+        throw new AppError('Invalid game response', 500, 'INVALID_GAME_RESPONSE');
+      }
+
+      // Process any damage from the response
+      const totalDamage = response.reduce((sum, msg) => sum + (msg.damage || 0), 0);
+      if (
+        (totalDamage > 0 && gameState.health - totalDamage <= 0) ||
+        response.at(-1)?.health === 0
+      ) {
+        await this.handleGameOver(gameState.threadId);
+      }
+
+      return response;
+    } catch (error) {
+      if (error instanceof AppError) {
+        throw error;
+      }
+      throw new AppError('Failed to recover state', 500, 'RECOVER_STATE_FAILED');
     }
   }
 
@@ -90,7 +130,7 @@ export class GameService {
   private async handleGameOver(threadId: string): Promise<void> {
     try {
       const gameOverMessage = {
-        player_decision: 'GAME_OVER',
+        decision: 'GAME_OVER',
         health: 0,
         items: [],
         situation: 'game over'
@@ -149,7 +189,7 @@ export class GameService {
   /* async getRecentMessages(threadId: string, limit = 10): Promise<ZorkMessage[]> {
     try {
       const message = {
-        player_decision: 'GET_HISTORY',
+        decision: 'GET_HISTORY',
         health: 100,
         items: [],
         situation: 'history request'

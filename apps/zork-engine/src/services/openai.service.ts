@@ -5,6 +5,7 @@ import { AppError } from '../errors/app_error';
 export class OpenAIService {
   private openai: OpenAI;
   private assistantId: string;
+  public recoveryKey: string;
 
   constructor() {
     const apiKey = process.env.OPENAI_API_KEY;
@@ -12,8 +13,14 @@ export class OpenAIService {
       throw new AppError('OpenAI API key not found', 500, 'MISSING_API_KEY');
     }
 
+    const stateRecoveryKey = process.env.OPENAI_STATE_RECOVERY_KEY;
+    if (!stateRecoveryKey) {
+      throw new AppError('State recovery key not found', 500, 'MISSING_STATE_RECOVERY_KEY');
+    }
+
     this.openai = new OpenAI({ apiKey });
     this.assistantId = ASSISTANT_ID;
+    this.recoveryKey = stateRecoveryKey;
 
     if (!this.assistantId) {
       throw new AppError('Assistant ID not found', 500, 'MISSING_ASSISTANT_ID');

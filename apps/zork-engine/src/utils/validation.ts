@@ -1,3 +1,4 @@
+import { MessageContent } from '@zork-ai/core';
 import { AppError } from '../errors/app_error';
 
 export function validateNewGameRequest(data: unknown): { theme: string } {
@@ -17,13 +18,7 @@ export function validateNewGameRequest(data: unknown): { theme: string } {
   return { theme: (theme as string) || 'zork' };
 }
 
-export function validateGameAction(data: unknown): {
-  threadId: string;
-  decision: string;
-  health: number;
-  items: string[];
-  situation: string;
-} {
+export function validateGameAction(data: unknown): MessageContent & { threadId: string } {
   if (!data || typeof data !== 'object') {
     throw new AppError('Invalid request body', 400, 'INVALID_REQUEST');
   }

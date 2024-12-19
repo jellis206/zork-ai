@@ -12,7 +12,7 @@ import {
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { ZorkService } from '../../services/zork.service';
-import { ZorkMessage } from '@zork-ai/core';
+import { GameState, ZorkMessage } from '@zork-ai/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { catchError, combineLatest, finalize, of, switchMap, tap } from 'rxjs';
 import { RetroThinkingLoaderComponent } from '../retro-loader/retro_thinking_loader.component';
@@ -26,126 +26,107 @@ const SUMMARY_LENGTH = 100;
   standalone: true,
   imports: [ReactiveFormsModule, RetroThinkingLoaderComponent, GameOverComponent],
   template: `
-    @if (gameStatus() !== 'playing') {
-    <app-game-over [gameState]="gameOver()" />
-    }@else{
-    <div
-      class="min-h-screen bg-gray-900 text-white grid grid-cols-1 lg:grid-cols-[1fr,300px] gap-4 p-4"
-    >
-      <!-- Game Terminal -->
-      <div class="bg-gray-800 rounded-lg shadow-lg flex flex-col">
-        <!-- Messages Area -->
-        <div #messagesContainer class="flex-1 overflow-y-auto p-4 space-y-2">
-          @for (message of messages(); track $index) {
-          <div class="message-container" [class.justify-end]="message.player_decision">
-            <div
-              class="max-w-3/4 rounded-lg px-4 py-2"
-              [class]="
-                message.player_decision ? 'bg-blue-600 text-white' : 'bg-gray-700 text-gray-200'
-              "
-            >
-              <span class="font-bold">
-                {{ message.player_decision ? '>' : 'ZorkBot:' }}
-              </span>
-              <span class="ml-2">
-                {{ message.reply || message.player_decision }}
-              </span>
+    <div class="bg-gray-900 p-4">
+      @if (gameStatus() !== 'playing') {
+      <app-game-over [gameState]="gameOver()" />
+      }@else{
+      <div class="text-white flex flex-col lg:flex-row gap-4">
+        <!-- Game Terminal -->
+        <div class="h-[calc(100vh-32px)] bg-gray-800 rounded-lg shadow-lg flex flex-col">
+          <!-- Messages Area -->
+          <div #messagesContainer class="flex-1 min-h-0 overflow-y-auto p-4 space-y-2">
+            @for (message of messages(); track $index) {
+            <div class="message-container" [class.justify-end]="message.decision">
+              <div
+                class="max-w-3/4 rounded-lg px-4 py-2"
+                [class]="message.decision ? 'bg-blue-600 text-white' : 'bg-gray-700 text-gray-200'"
+              >
+                <span class="font-bold">
+                  {{ message.decision ? '>' : 'ZorkBot:' }}
+                </span>
+                <span class="ml-2">
+                  {{ message.reply || message.decision }}
+                </span>
+              </div>
+            </div>
+            }
+            <app-retro-thinking-loader [show]="isProcessing()" />
+          </div>
+
+          <!-- Input Area -->
+          <div class="border-t border-gray-700 p-4 flex items-center space-x-2">
+            <span class="text-green-500 font-mono">&gt;</span>
+            <input
+              #commandInput
+              type="text"
+              [formControl]="command"
+              (keyup.enter)="submitCommand()"
+              class="flex-1 bg-gray-700 text-white px-4 py-2 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              [class.opacity-50]="isProcessing()"
+              placeholder="{{
+                isProcessing() ? 'Waiting for response...' : 'Enter your command...'
+              }}"
+            />
+          </div>
+        </div>
+
+        <!-- Side Panel -->
+        <div
+          class="h-[calc(100vh-32px)] flex-shrink-0 w-full lg:w-[300px] bg-gray-800 rounded-lg shadow-lg p-4 flex flex-col space-y-6"
+        >
+          <!-- Health Bar -->
+          <div class="space-y-2">
+            <h3 class="text-xl font-bold">Health</h3>
+            <div class="flex flex-wrap">
+              @for (heart of hearts(); track $index) {
+              <img [src]="getHeartImage(heart)" class="w-6 h-6" alt="health" />
+              }
+            </div>
+          </div>
+
+          <!-- Progress Hint -->
+          @if (this.gameState().progress) {
+          <div class="space-y-2">
+            <h3 class="text-xl font-bold flex items-center gap-2">
+              <img src="hint.svg" alt="Hint" class="w-6 h-6" />
+              Progress Hint
+            </h3>
+            <div class="bg-gray-700 rounded-lg p-3 text-sm italic text-gray-300">
+              {{ this.gameState().progress }}
             </div>
           </div>
           }
-          <app-retro-thinking-loader [show]="isProcessing()" />
-        </div>
 
-        <!-- Input Area -->
-        <div class="border-t border-gray-700 p-4 flex items-center space-x-2">
-          <span class="text-green-500 font-mono">&gt;</span>
-          <input
-            #commandInput
-            type="text"
-            [formControl]="command"
-            (keyup.enter)="submitCommand()"
-            class="flex-1 bg-gray-700 text-white px-4 py-2 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
-            [class.opacity-50]="isProcessing()"
-            placeholder="{{ isProcessing() ? 'Waiting for response...' : 'Enter your command...' }}"
-          />
-        </div>
-      </div>
-
-      <!-- Side Panel -->
-      <div class="bg-gray-800 rounded-lg shadow-lg p-4 space-y-6">
-        <!-- Health Bar -->
-        <div class="space-y-2">
-          <h3 class="text-xl font-bold">Health</h3>
-          <div class="flex flex-wrap">
-            @for (heart of hearts(); track $index) {
-            <img [src]="getHeartImage(heart)" class="w-6 h-6" alt="health" />
-            }
-          </div>
-        </div>
-
-        <!-- Progress Hint -->
-        @if (this.gameState().progress) {
-        <div class="space-y-2">
-          <h3 class="text-xl font-bold flex items-center gap-2">
-            <img src="hint.webp" alt="Hint" class="w-6 h-6" />
-            Progress Hint
-          </h3>
-          <div class="bg-gray-700 rounded-lg p-3 text-sm italic text-gray-300">
-            {{ this.gameState().progress }}
-          </div>
-        </div>
-        }
-
-        <!-- Inventory -->
-        <div class="space-y-2">
-          <div class="flex items-center gap-2">
-            <img src="backpack.webp" alt="Inventory backpack" class="w-6 h-6" />
-            <h3 class="text-xl font-bold">Inventory</h3>
-          </div>
+          <!-- Inventory -->
           <div class="space-y-2">
-            @for (item of gameState().items; track $index) {
-            <div class="bg-gray-700 rounded-lg px-3 py-2 text-sm">
-              {{ item }}
+            <div class="flex items-center gap-2">
+              <img src="backpack.webp" alt="Inventory backpack" class="w-6 h-6" />
+              <h3 class="text-xl font-bold">Inventory</h3>
             </div>
-            } @if (!gameState().items.length) {
-            <div class="text-gray-500 italic">No items in inventory</div>
-            }
+            <div class="space-y-2">
+              @for (item of gameState().items; track $index) {
+              <div class="bg-gray-700 rounded-lg px-3 py-2 text-sm">
+                {{ item }}
+              </div>
+              } @if (!gameState().items.length) {
+              <div class="text-gray-500 italic">No items in inventory</div>
+              }
+            </div>
+          </div>
+
+          <!-- Score -->
+          <div class="space-y-2">
+            <h3 class="text-xl font-bold flex items-center gap-2">
+              <span class="font-mono text-yellow-400 tracking-wider">SCORE</span>
+            </h3>
+            <div class="text-2xl font-mono text-yellow-400">{{ this.gameState().score }}</div>
           </div>
         </div>
-
-        <!-- Score -->
-        <div class="space-y-2">
-          <h3 class="text-xl font-bold flex items-center gap-2">
-            <span class="font-mono text-yellow-400 tracking-wider">SCORE</span>
-          </h3>
-          <div class="text-2xl font-mono text-yellow-400">{{ this.gameState().score }}</div>
-        </div>
       </div>
+      }
     </div>
-    }
   `,
-  styles: [
-    `
-      .game-screen {
-        display: grid;
-        grid-template-columns: 1fr 300px;
-        height: 100vh;
-        gap: 1rem;
-        padding: 1rem;
-      }
-      .messages {
-        height: calc(100vh - 100px);
-        overflow-y: auto;
-        padding: 1rem;
-      }
-      .message {
-        margin-bottom: 0.5rem;
-        &.player {
-          color: #4caf50;
-        }
-      }
-    `
-  ]
+  styles: []
 })
 export class GameComponent implements AfterViewChecked {
   messagesContainer = viewChild<ElementRef>('messagesContainer');
@@ -162,13 +143,9 @@ export class GameComponent implements AfterViewChecked {
 
   // Compute gameState based on threadId and other state
   gameState = computed(() => {
-    const lastMsg = this.messages()[this.messages.length - 1];
+    const lastMsg = this.messages().at(-1);
     const situation =
-      lastMsg?.situation ||
-      lastMsg?.context ||
-      lastMsg?.reply ||
-      lastMsg?.player_decision ||
-      'zork';
+      lastMsg?.situation || lastMsg?.context || lastMsg?.reply || lastMsg?.decision || 'zork';
     return {
       threadId: this.threadId(),
       health: lastMsg?.health || 100,
@@ -180,7 +157,7 @@ export class GameComponent implements AfterViewChecked {
   });
 
   gameStatus = computed(() => {
-    const context = this.messages()[this.messages.length - 1]?.context?.toLowerCase() || '';
+    const context = this.messages().at(-1)?.context?.toLowerCase() || '';
 
     if (context.length === 0) return 'playing';
 
@@ -296,7 +273,16 @@ export class GameComponent implements AfterViewChecked {
 
     this.zorkService
       .processAction(this.gameState(), decision)
-      .pipe(takeUntilDestroyed(this.destroyRef))
+      .pipe(
+        switchMap((messages) => {
+          const stateLost: GameState | false = this.getLostState(messages);
+          if (stateLost) {
+            return this.zorkService.recoverState(stateLost as GameState, decision);
+          }
+          return of(messages);
+        }),
+        takeUntilDestroyed(this.destroyRef)
+      )
       .subscribe({
         next: (messages) => {
           this.messages.update((current) => [...current, ...messages]);
@@ -308,6 +294,56 @@ export class GameComponent implements AfterViewChecked {
           // Add error handling UI here
         }
       });
+  }
+
+  private getLostState(newMessages: ZorkMessage[]): GameState | false {
+    if (!this.isInitialized()) return false;
+
+    const messages = [...this.messages(), ...newMessages];
+    const lastMsg = messages.at(-1);
+    if (!lastMsg) return false;
+
+    const hasNoItems = lastMsg.items?.length === 0;
+    if (!hasNoItems) return false;
+
+    const messagesReversed = [...messages].reverse();
+    const lastMessageWithItems = messagesReversed.find((msg) => msg.items?.length > 0);
+
+    if (lastMessageWithItems) {
+      // Find the next message after this one (the one where items were lost)
+      const lastMessageIndex = messages.indexOf(lastMessageWithItems);
+      const nextMessage = messages[lastMessageIndex + 1];
+
+      if (nextMessage) {
+        const itemCountBefore = lastMessageWithItems.items?.length || 0;
+        const itemCountAfter = nextMessage.items?.length || 0;
+        const itemsLostSuddenly =
+          itemCountBefore - itemCountAfter > 1 || (itemCountBefore === 1 && itemCountAfter === 0);
+
+        // Check if the message doesn't explain the loss
+        const noExplanation =
+          !nextMessage.reply?.toLowerCase().includes('took') &&
+          !nextMessage.reply?.toLowerCase().includes('drop') &&
+          !nextMessage.reply?.toLowerCase().includes('gave') &&
+          !nextMessage.reply?.toLowerCase().includes('lost');
+
+        if (itemsLostSuddenly && noExplanation) {
+          return {
+            threadId: this.threadId(),
+            health: lastMessageWithItems.health || 100,
+            items: lastMessageWithItems.items || [],
+            situation:
+              lastMessageWithItems.situation ||
+              lastMessageWithItems.context ||
+              lastMessageWithItems.reply ||
+              'zork',
+            score: lastMessageWithItems.score || 0,
+            progress: lastMessageWithItems.progress || ''
+          };
+        }
+      }
+    }
+    return false;
   }
 
   private fetchGameHistory(): Signal<ZorkMessage[] | null> {

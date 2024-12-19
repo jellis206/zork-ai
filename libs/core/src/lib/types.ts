@@ -2,13 +2,14 @@ export type MessageContent = {
   health: number;
   items: string[];
   situation: string;
-  player_decision: string;
+  decision: string;
+  stateRecovery?: string;
 };
 
 export type ZorkMessage = {
   items: string[];
   reply?: string;
-  player_decision?: string;
+  decision?: string;
   damage?: number;
   health?: number;
   context?: string;
@@ -22,7 +23,7 @@ export type GameState = {
   health: number;
   items: string[];
   situation: string;
-  score: number;
+  score?: number;
   progress?: string;
 };
 

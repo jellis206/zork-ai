@@ -22,6 +22,13 @@ export class ZorkService {
     });
   }
 
+  recoverState(gameState: GameState, decision: string): Observable<ZorkMessage[]> {
+    return this.http.post<ZorkMessage[]>(`${this.apiUrl}/recover-state`, {
+      ...gameState,
+      decision
+    });
+  }
+
   getGameHistory(threadId: string): Observable<ZorkMessage[]> {
     return this.http.get<ZorkMessage[]>(`${this.apiUrl}/history/${threadId}`);
   }

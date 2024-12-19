@@ -61,6 +61,16 @@ const server = Bun.serve({
         return Response.json(response, { headers: corsHeaders });
       }
 
+      // Recover game state
+      if (url.pathname === '/api/game/recover-state' && req.method === 'POST') {
+        const body = await req.json();
+        const validatedData = validateGameAction(body);
+        const { threadId, decision, health, items, situation } = validatedData;
+        const gameState = { threadId, health, items, situation };
+        const response = await gameService.recoverState(gameState, decision);
+        return Response.json(response, { headers: corsHeaders });
+      }
+
       if (url.pathname.startsWith('/api/game/history/') && req.method === 'GET') {
         const threadId = url.pathname.split('/').pop();
         if (!threadId) {

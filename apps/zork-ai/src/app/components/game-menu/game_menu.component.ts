@@ -48,9 +48,11 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
         @if (isLoading()) {
         <div class="fixed inset-0 bg-gray-900 bg-opacity-90 flex items-center justify-center z-50">
           <div class="retro-loader text-center font-mono">
-            <pre class="text-green-500 animate-pulse mb-4">{{ loaderFrames[currentFrame] }}</pre>
-            <div class="typewriter-text text-green-500">
-              > LOADING ADVENTURE...
+            <pre class="text-green-500 text-left animate-pulse mb-4">{{
+              loaderFrames[currentFrame]
+            }}</pre>
+            <div class="typewriter-text text-left text-green-500">
+              > LOADING YOUR ADVENTURE...
               <span class="cursor">_</span>
             </div>
           </div>
