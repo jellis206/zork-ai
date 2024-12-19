@@ -83,6 +83,19 @@ const SUMMARY_LENGTH = 100;
           </div>
         </div>
 
+        <!-- Progress Hint -->
+        @if (this.gameState().progress) {
+        <div class="space-y-2">
+          <h3 class="text-xl font-bold flex items-center gap-2">
+            <img src="hint.webp" alt="Hint" class="w-6 h-6" />
+            Progress Hint
+          </h3>
+          <div class="bg-gray-700 rounded-lg p-3 text-sm italic text-gray-300">
+            {{ this.gameState().progress }}
+          </div>
+        </div>
+        }
+
         <!-- Inventory -->
         <div class="space-y-2">
           <div class="flex items-center gap-2">
@@ -98,6 +111,14 @@ const SUMMARY_LENGTH = 100;
             <div class="text-gray-500 italic">No items in inventory</div>
             }
           </div>
+        </div>
+
+        <!-- Score -->
+        <div class="space-y-2">
+          <h3 class="text-xl font-bold flex items-center gap-2">
+            <span class="font-mono text-yellow-400 tracking-wider">SCORE</span>
+          </h3>
+          <div class="text-2xl font-mono text-yellow-400">{{ this.gameState().score }}</div>
         </div>
       </div>
     </div>
@@ -140,14 +161,41 @@ export class GameComponent implements AfterViewChecked {
   command = new FormControl('', { nonNullable: true });
 
   // Compute gameState based on threadId and other state
-  gameState = computed(() => ({
-    threadId: this.threadId(),
-    health: this.health(),
-    items: this.items(),
-    situation: this.currentSituation()
-  }));
-  gameStatus = signal<'playing' | 'death' | 'victory' | 'tie'>('playing');
-  gameOver: Signal<'death' | 'victory' | 'tie'> = computed(() => {
+  gameState = computed(() => {
+    const lastMsg = this.messages()[this.messages.length - 1];
+    const situation =
+      lastMsg?.situation ||
+      lastMsg?.context ||
+      lastMsg?.reply ||
+      lastMsg?.player_decision ||
+      'zork';
+    return {
+      threadId: this.threadId(),
+      health: lastMsg?.health || 100,
+      items: lastMsg?.items || [],
+      situation: this.shouldSummarize(situation) ? this.summarize(situation) : situation,
+      score: lastMsg?.score || 0,
+      progress: lastMsg?.progress || ''
+    };
+  });
+
+  gameStatus = computed(() => {
+    const context = this.messages()[this.messages.length - 1]?.context?.toLowerCase() || '';
+
+    if (context.length === 0) return 'playing';
+
+    if (context.includes('death') || context.includes('lose')) {
+      return 'death';
+    }
+    if (context.includes('victory') || context.includes('win')) {
+      return 'victory';
+    }
+    if (context.includes('stalemate') || context.includes('tie')) {
+      return 'stalemate';
+    }
+    return 'playing';
+  });
+  gameOver: Signal<'death' | 'victory' | 'stalemate'> = computed(() => {
     const status = this.gameStatus();
     if (status === 'playing') {
       throw new Error('Should not call getNonPlayingState when status is playing');
@@ -155,13 +203,9 @@ export class GameComponent implements AfterViewChecked {
     return status;
   });
 
-  // Break down state into smaller pieces
-  private health = signal<number>(100);
-  private items = signal<string[]>([]);
-
   // Compute hearts based on health
   hearts = computed(() => {
-    const health = this.health();
+    const health = this.gameState().health;
     const hearts: ('full' | 'half' | 'empty')[] = [];
 
     for (let i = 0; i < 10; i++) {
@@ -176,17 +220,6 @@ export class GameComponent implements AfterViewChecked {
     }
 
     return hearts;
-  });
-
-  // Compute current situation
-  private currentSituation = computed(() => {
-    const messages = this.messages();
-    if (!messages.length) return '';
-
-    const msg = messages[messages.length - 1];
-    const situation =
-      msg?.situation || msg?.context || msg?.reply || msg?.player_decision || 'zork';
-    return this.shouldSummarize(situation) ? this.summarize(situation) : situation;
   });
 
   private isInitialized = signal(false);
@@ -265,8 +298,8 @@ export class GameComponent implements AfterViewChecked {
       .processAction(this.gameState(), decision)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-        next: (response) => {
-          this.updateGameState(response);
+        next: (messages) => {
+          this.messages.update((current) => [...current, ...messages]);
           this.isProcessing.set(false);
         },
         error: (error) => {
@@ -293,27 +326,6 @@ export class GameComponent implements AfterViewChecked {
       ),
       { initialValue: null }
     );
-  }
-
-  private updateGameState(messages: ZorkMessage[]) {
-    this.messages.update((current) => [...current, ...messages]);
-
-    const lastMessage = messages[messages.length - 1];
-    if (lastMessage?.items) {
-      this.items.set(lastMessage.items);
-    }
-
-    const damage = messages.reduce((sum, msg) => sum + (msg.damage || 0), 0);
-    const newHealth = Math.max(0, this.health() - damage);
-    this.health.set(newHealth);
-
-    if (newHealth <= 0) {
-      this.gameStatus.set('death');
-    } /*else if (victory) {
-      this.gameStatus.set('victory');
-    } else if (tie) {
-      this.gameStatus.set('tie');
-    }*/
   }
 
   private shouldSummarize(message: string | undefined): boolean {

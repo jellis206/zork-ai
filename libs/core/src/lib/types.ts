@@ -13,6 +13,8 @@ export type ZorkMessage = {
   health?: number;
   context?: string;
   situation?: string;
+  score?: number;
+  progress?: string;
 };
 
 export type GameState = {
@@ -20,6 +22,8 @@ export type GameState = {
   health: number;
   items: string[];
   situation: string;
+  score: number;
+  progress?: string;
 };
 
 export type NewGameResponse = {

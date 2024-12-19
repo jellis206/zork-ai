@@ -79,8 +79,8 @@ import { Router, RouterLink } from '@angular/router';
         >
         }
 
-        <!-- Tie Screen -->
-        @if (gameState() === 'tie') {
+        <!-- stalemate Screen -->
+        @if (gameState() === 'stalemate') {
         <pre [@slideIn] class="text-yellow-500 leading-tight">
 ▗▖    ▄▄▄   ▄▄▄ ▄ ▄▄▄▄
 ▐▌   █   █ █    ▄ █   █
@@ -153,7 +153,7 @@ import { Router, RouterLink } from '@angular/router';
   ]
 })
 export class GameOverComponent {
-  gameState = input.required<'death' | 'victory' | 'tie'>();
+  gameState = input.required<'death' | 'victory' | 'stalemate'>();
 
   isBlinking = signal(true);
   //  score = signal(10)
@@ -188,7 +188,7 @@ export class GameOverComponent {
         return 'text-red-500';
       case 'victory':
         return 'text-green-500';
-      case 'tie':
+      case 'stalemate':
         return 'text-yellow-500';
       default:
         return '';
@@ -201,7 +201,7 @@ export class GameOverComponent {
         return 'bg-red-950 hover:bg-red-900 text-red-500';
       case 'victory':
         return 'bg-green-950 hover:bg-green-900 text-green-500';
-      case 'tie':
+      case 'stalemate':
         return 'bg-yellow-950 hover:bg-yellow-900 text-yellow-500';
       default:
         return '';
@@ -214,7 +214,7 @@ export class GameOverComponent {
         return 'YOUR QUEST HAS ENDED';
       case 'victory':
         return 'A TRUE HERO EMERGES';
-      case 'tie':
+      case 'stalemate':
         return 'THE JOURNEY CONTINUES...';
       default:
         return '';
@@ -227,7 +227,7 @@ export class GameOverComponent {
         return 'But the dungeon awaits another brave soul...';
       case 'victory':
         return 'Your legend shall echo through the ages!';
-      case 'tie':
+      case 'stalemate':
         return 'Not all who wander are lost...';
       default:
         return '';
@@ -240,7 +240,7 @@ export class GameOverComponent {
         return 'text-red-500';
       case 'victory':
         return 'text-green-500';
-      case 'tie':
+      case 'stalemate':
         return 'text-yellow-500';
       default:
         return '';
